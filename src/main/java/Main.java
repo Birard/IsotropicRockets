@@ -25,25 +25,37 @@ public class Main {
 
         GL.createCapabilities();
 
+        glEnable(GL_TEXTURE_2D);
+
+        Texture tex = new Texture("src/main/resources/test.png");
+
         glClearColor(0,255,255,0);
 
+        float x = 0;
+
         while (!glfwWindowShouldClose(window)) {
+
+            if(glfwGetKey(window, GLFW_KEY_A) == GL_TRUE) { x-=0.001f; if(x<-1)x=1f;}
+
             glfwPollEvents();
 
             glClear(GL_COLOR_BUFFER_BIT);
 
+            tex.bind();
+
             glBegin(GL_QUADS);
-                glColor4f(1,0,0,0);
-                glVertex2f(-0.5f,0.5f);
+                glTexCoord2f(0,0);
+                glVertex2f(-0.5f+x,0.5f);
 
-                glColor4f(0,1,0,0);
-                glVertex2f(0.5f,0.5f);
+                glTexCoord2f(1,0);
+                glVertex2f(0.5f+x,0.5f);
 
-                glColor4f(0,0,1,0);
-                glVertex2f(0.5f,-0.5f);
 
-                glColor4f(0,1,0,0);
-                glVertex2f(-0.5f,-0.5f);
+                glTexCoord2f(1,1);
+                glVertex2f(0.5f+x,-0.5f);
+
+                glTexCoord2f(0,1);
+                glVertex2f(-0.5f+x,-0.5f);
             glEnd();
 
             glfwSwapBuffers(window);

@@ -27,15 +27,35 @@ public class Main {
 
         glEnable(GL_TEXTURE_2D);
 
+        float[] vertices = new float[]{
+
+                // верхний правый треугольник
+                -0.5f, 0.5f, 0, //TOP LEFT
+                0.5f, 0.5f, 0,  //TOP RIGHT
+                0.5f, -0.5f, 0,  //BOTTOM RIGHT
+                //нижний левый треугольник
+                0.5f, -0.5f, 0,  //BOTTOM RIGHT
+                -0.5f, -0.5f, 0, //BOTTOM LEFT
+                -0.5f, 0.5f, 0 //TOP LEFT
+        };
+
+        float[] texture = new float[] {
+          0,0,
+          1,0,
+          1,1,
+
+          1,1,
+          0,1,
+          0,0
+        };
+
+        Model model = new Model(vertices, texture);
+
         Texture tex = new Texture("src/main/resources/test.png");
 
         glClearColor(0,255,255,0);
 
-        float x = 0;
-
         while (!glfwWindowShouldClose(window)) {
-
-            if(glfwGetKey(window, GLFW_KEY_A) == GL_TRUE) { x-=0.001f; if(x<-1)x=1f;}
 
             glfwPollEvents();
 
@@ -43,20 +63,7 @@ public class Main {
 
             tex.bind();
 
-            glBegin(GL_QUADS);
-                glTexCoord2f(0,0);
-                glVertex2f(-0.5f+x,0.5f);
-
-                glTexCoord2f(1,0);
-                glVertex2f(0.5f+x,0.5f);
-
-
-                glTexCoord2f(1,1);
-                glVertex2f(0.5f+x,-0.5f);
-
-                glTexCoord2f(0,1);
-                glVertex2f(-0.5f+x,-0.5f);
-            glEnd();
+            model.render();
 
             glfwSwapBuffers(window);
         }

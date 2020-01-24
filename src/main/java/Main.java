@@ -30,26 +30,25 @@ public class Main {
         float[] vertices = new float[]{
 
                 // верхний правый треугольник
-                -0.5f, 0.5f, 0, //TOP LEFT
-                0.5f, 0.5f, 0,  //TOP RIGHT
-                0.5f, -0.5f, 0,  //BOTTOM RIGHT
-                //нижний левый треугольник
-                0.5f, -0.5f, 0,  //BOTTOM RIGHT
-                -0.5f, -0.5f, 0, //BOTTOM LEFT
-                -0.5f, 0.5f, 0 //TOP LEFT
+                -0.5f, 0.5f, 0, //TOP LEFT      0
+                0.5f, 0.5f, 0,  //TOP RIGHT     1
+                0.5f, -0.5f, 0,  //BOTTOM RIGHT 2
+                -0.5f, -0.5f, 0, //BOTTOM LEFT  3
         };
 
         float[] texture = new float[] {
-          0,0,
-          1,0,
-          1,1,
-
-          1,1,
-          0,1,
-          0,0
+          0,0, // 0
+          1,0, // 1
+          1,1, // 2
+          0,1, // 3
         };
 
-        Model model = new Model(vertices, texture);
+        int[] indices = new int[] {
+          0,1,2,
+          2,3,0
+        };
+
+        Model model = new Model(vertices, texture, indices);
 
         Texture tex = new Texture("src/main/resources/test.png");
 

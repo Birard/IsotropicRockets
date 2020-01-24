@@ -49,8 +49,9 @@ public class Main {
         };
 
         Model model = new Model(vertices, texture, indices);
+        Shader shader = new Shader("shader");
 
-        Texture tex = new Texture("src/main/resources/test.png");
+        //Texture tex = new Texture("src/main/resources/test.png");
 
         glClearColor(0,255,255,0);
 
@@ -60,7 +61,8 @@ public class Main {
 
             glClear(GL_COLOR_BUFFER_BIT);
 
-            tex.bind();
+            //tex.bind();
+            shader.bind();
 
             model.render();
 

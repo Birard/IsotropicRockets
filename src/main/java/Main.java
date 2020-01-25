@@ -1,3 +1,4 @@
+import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 
@@ -53,6 +54,11 @@ public class Main {
 
         Texture tex = new Texture("src/main/resources/test.png");
 
+        Matrix4f projection = new Matrix4f().ortho2D(-640/2f, 640/2f, -480/2f, 480/2f);
+        Matrix4f scale = new Matrix4f().scale(100);
+        Matrix4f target = new Matrix4f();
+        projection.mul(scale,target);
+
         glClearColor(0,255,255,0);
 
         while (!glfwWindowShouldClose(window)) {
@@ -63,6 +69,7 @@ public class Main {
 
             shader.bind();
             shader.setUniform("sampler", 0);
+            shader.setUniform("projection", target);
             tex.bind(0);
             model.render();
 

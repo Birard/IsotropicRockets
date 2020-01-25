@@ -1,3 +1,6 @@
+package io;
+
+import io.Input;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 

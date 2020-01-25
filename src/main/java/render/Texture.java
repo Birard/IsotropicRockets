@@ -1,3 +1,5 @@
+package render;
+
 import org.lwjgl.BufferUtils;
 
 import javax.imageio.ImageIO;
@@ -18,7 +20,7 @@ public class Texture {
     public Texture(String filename) {
         BufferedImage bi;
         try {
-            bi = ImageIO.read(new File(filename));
+            bi = ImageIO.read(new File("src/main/resources/"+filename));
             width = bi.getWidth();
             height = bi.getHeight();
 

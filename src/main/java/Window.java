@@ -9,6 +9,8 @@ public class Window {
     private int width, height;
     private boolean fullscreen;
 
+    private Input input;
+
     public static void setCallbacks() {
         glfwSetErrorCallback(new GLFWErrorCallback() {
 
@@ -41,6 +43,8 @@ public class Window {
 
         glfwMakeContextCurrent(window);
 
+        input = new Input(window);
+
     }
 
     public boolean shouldClose() {
@@ -64,11 +68,20 @@ public class Window {
         this.fullscreen = fullscreen;
     }
 
+    public void update() {
+        input.update();
+        glfwPollEvents();
+    }
+
     public boolean isFullscreen() {
         return fullscreen;
     }
 
     public long getWindow() {
         return window;
+    }
+
+    public Input getInput() {
+        return input;
     }
 }

@@ -1,6 +1,5 @@
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
-import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -15,7 +14,7 @@ public class Main {
         Window win = new Window();
         Window.setCallbacks();
         win.setFullscreen(true);
-        win.setSize(640,480);
+        win.setSize(1366,768);
         win.createWindow("Game");
 
 
@@ -58,7 +57,7 @@ public class Main {
 
         glClearColor(0,255,255,0);
 
-        double frame_cap = 1.0/300.0; // в одной секунде 300 кадров
+        double frame_cap = 1.0/60.0; // в одной секунде 60 кадров
         double frame_time = 0;
         int frames = 0;
 
@@ -78,11 +77,10 @@ public class Main {
                 can_render = true;
                 target = scale;
 
-                if(glfwGetKey(win.getWindow(), GLFW_KEY_ESCAPE) == GL_TRUE) {
+                if(win.getInput().isKeyDown(GLFW_KEY_ESCAPE)) {
                     glfwSetWindowShouldClose(win.getWindow(), true);
                 }
-
-                glfwPollEvents();
+                win.update();
                 if(frame_time >= 1.0) {
                     frame_time = 0;
                     System.out.println("FPS: " + frames);

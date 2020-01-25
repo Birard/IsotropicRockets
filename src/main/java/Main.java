@@ -12,18 +12,10 @@ public class Main {
             throw new IllegalStateException("Failed to initialize");
         }
 
-        glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-        long window = glfwCreateWindow(640,480,"My LWJGL", 0, 0);
-        if (window == 0) {
-            throw new IllegalStateException("Failed to create window");
-        }
+        Window win = new Window();
+        win.setSize(100,100);
+        win.createWindow("Game");
 
-        GLFWVidMode videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-        glfwSetWindowPos(window, (videoMode.width() - 640)/2, (videoMode.height() - 640)/2);
-
-        glfwShowWindow(window);
-
-        glfwMakeContextCurrent(window);
 
         GL.createCapabilities();
 
@@ -58,24 +50,51 @@ public class Main {
 
         Matrix4f scale = new Matrix4f().scale(100);
         Matrix4f target;
+        target = scale;
 
         camera.setPosition(new Vector3f(0, 0, 0));
 
         glClearColor(0,255,255,0);
 
-        while (!glfwWindowShouldClose(window)) {
-            target = scale;
-            glfwPollEvents();
+        double frame_cap = 1.0/60.0; // в одной секунде 60 кадров
+        double frame_time = 0;
+        int frames = 0;
 
-            glClear(GL_COLOR_BUFFER_BIT);
+        double time = Timer.getTime();
+        double unprocessed = 0;
 
-            shader.bind();
-            shader.setUniform("sampler", 0);
-            shader.setUniform("projection", camera.getProjection().mul(target));
-            tex.bind(0);
-            model.render();
+        while (!win.shouldClose()) {
+            boolean can_render = false;
+            double time_2 = Timer.getTime();
+            double passed = time_2 - time;
+            unprocessed+=passed;
+            frame_time +=passed;
+            time = time_2;
 
-            glfwSwapBuffers(window);
+            while (unprocessed >= frame_cap) {
+                unprocessed -= frame_cap;
+                can_render = true;
+                target = scale;
+
+                glfwPollEvents();
+                if(frame_time >= 1.0) {
+                    frame_time = 0;
+                    System.out.println("FPS: " + frames);
+                    frames = 0;
+                }
+            }
+
+            if(can_render) {
+                glClear(GL_COLOR_BUFFER_BIT);
+
+                shader.bind();
+                shader.setUniform("sampler", 0);
+                shader.setUniform("projection", camera.getProjection().mul(target));
+                tex.bind(0);
+                model.render();
+                win.swapBuffers();
+                frames++;
+            }
         }
 
         glfwTerminate();

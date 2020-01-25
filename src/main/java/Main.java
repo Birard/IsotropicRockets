@@ -8,18 +8,20 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class Main {
     public static void main (String[] args){
+
         if(!glfwInit()) {
             throw new IllegalStateException("Failed to initialize");
         }
-
         Window win = new Window();
-        win.setSize(100,100);
+        Window.setCallbacks();
+        win.setFullscreen(true);
+        win.setSize(640,480);
         win.createWindow("Game");
 
 
         GL.createCapabilities();
 
-        Camera camera = new Camera(640,480);
+        Camera camera = new Camera(win.getWidth(),win.getHeight());
         glEnable(GL_TEXTURE_2D);
 
         float[] vertices = new float[]{
@@ -56,7 +58,7 @@ public class Main {
 
         glClearColor(0,255,255,0);
 
-        double frame_cap = 1.0/60.0; // в одной секунде 60 кадров
+        double frame_cap = 1.0/300.0; // в одной секунде 300 кадров
         double frame_time = 0;
         int frames = 0;
 
@@ -75,6 +77,10 @@ public class Main {
                 unprocessed -= frame_cap;
                 can_render = true;
                 target = scale;
+
+                if(glfwGetKey(win.getWindow(), GLFW_KEY_ESCAPE) == GL_TRUE) {
+                    glfwSetWindowShouldClose(win.getWindow(), true);
+                }
 
                 glfwPollEvents();
                 if(frame_time >= 1.0) {

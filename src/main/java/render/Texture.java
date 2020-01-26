@@ -20,7 +20,7 @@ public class Texture {
     public Texture(String filename) {
         BufferedImage bi;
         try {
-            bi = ImageIO.read(new File("src/main/resources/"+filename));
+            bi = ImageIO.read(new File(filename));
             width = bi.getWidth();
             height = bi.getHeight();
 
@@ -52,6 +52,12 @@ public class Texture {
         }catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        glDeleteTextures(id);
+        super.finalize();
     }
 
     public void bind(int sampler) {

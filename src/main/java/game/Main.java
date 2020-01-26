@@ -1,5 +1,7 @@
 package game;
 
+import entity.Enemy;
+import entity.Player;
 import io.Timer;
 import io.Window;
 import org.joml.Matrix4f;
@@ -9,65 +11,71 @@ import render.Camera;
 import render.Model;
 import render.Shader;
 import render.Texture;
-import world.Tile;
-import world.TileRenderer;
-import world.World;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 
 public class Main {
-    public static void main (String[] args){
+    private static Main thisMain;
+    private static Window window;
+    private static Camera camera;
+    private  static Player player;
+    private  static Enemy enemy;
 
+    public Main() {
+
+    }
+    public static void main (String[] args){
+        thisMain = new Main();
         if(!glfwInit()) {
             throw new IllegalStateException("Failed to initialize");
         }
-        Window win = new Window();
+        window = new Window(thisMain);
         Window.setCallbacks();
-        win.setFullscreen(false);
-        win.setSize(480,360);
-        win.createWindow("Game");
+        window.setFullscreen(false);
+        window.setSize(1366,768);
+        window.createWindow("Game");
 
 
         GL.createCapabilities();
 
-        Camera camera = new Camera(win.getWidth(),win.getHeight());
+        camera = new Camera(window.getWidth(),window.getHeight());
         glEnable(GL_TEXTURE_2D);
 
-        TileRenderer tiles = new TileRenderer();
+        float[] vertices = new float[]{
 
-//        float[] vertices = new float[]{
-//
-//                // верхний правый треугольник
-//                -0.5f, 0.5f, 0, //TOP LEFT      0
-//                0.5f, 0.5f, 0,  //TOP RIGHT     1
-//                0.5f, -0.5f, 0,  //BOTTOM RIGHT 2
-//                -0.5f, -0.5f, 0, //BOTTOM LEFT  3
-//        };
-//
-//        float[] texture = new float[] {
-//          0,0, // 0
-//          1,0, // 1
-//          1,1, // 2
-//          0,1, // 3
-//        };
-//
-//        int[] indices = new int[] {
-//          0,1,2,
-//          2,3,0
-//        };
-//
-//        Model model = new Model(vertices, texture, indices);
-        //Texture tex = new Texture("src/main/resources/test.png");
+                // верхний правый треугольник
+                -0.5f, 0.5f, 0, //TOP LEFT      0
+                0.5f, 0.5f, 0,  //TOP RIGHT     1
+                0.5f, -0.5f, 0,  //BOTTOM RIGHT 2
+                -0.5f, -0.5f, 0, //BOTTOM LEFT  3
+        };
 
+        float[] texture = new float[] {
+          0,0, // 0
+          1,0, // 1
+          1,1, // 2
+          0,1, // 3
+        };
+
+        int[] indices = new int[] {
+          0,1,2,
+          2,3,0
+        };
+
+        Model model = new Model(vertices, texture, indices);
         Shader shader = new Shader("shader");
 
-        World world = new World();
+        player = new Player();
+        enemy = new Enemy();
 
-        world.setTile(Tile.test2, 0, 0);
-        world.setTile(Tile.test2, 0, 17);
-        world.setTile(Tile.test2, 17, 0);
-        world.setTile(Tile.test2, 17, 17);
+        Texture tex = new Texture("src/main/resources/test.png");
+
+        Matrix4f scale = new Matrix4f().scale(100);
+        Matrix4f target;
+        target = scale;
+
+        camera.setPosition(new Vector3f(0, 0, 0));
 
         glClearColor(0,255,255,0);
 
@@ -78,7 +86,7 @@ public class Main {
         double time = Timer.getTime();
         double unprocessed = 0;
 
-        while (!win.shouldClose()) {
+        while (!window.shouldClose()) {
             boolean can_render = false;
             double time_2 = Timer.getTime();
             double passed = time_2 - time;
@@ -89,28 +97,14 @@ public class Main {
             while (unprocessed >= frame_cap) {
                 unprocessed -= frame_cap;
                 can_render = true;
+                target = scale;
 
-                if(win.getInput().isKeyPressed(GLFW_KEY_ESCAPE)) {
-                    glfwSetWindowShouldClose(win.getWindow(), true);
-                }
+                player.update((float)frame_cap, window, camera);
+                enemy.update((float)frame_cap);
+                enemy.move(new Vector3f(player.getPosition()));
 
-                if(win.getInput().isKeyDown(GLFW_KEY_A)) {
-                    camera.getPosition().sub(new Vector3f(-1, 0, 0));
-                }
-                if(win.getInput().isKeyDown(GLFW_KEY_D)) {
-                    camera.getPosition().sub(new Vector3f(1, 0, 0));
-                }
+                window.update();
 
-                if(win.getInput().isKeyDown(GLFW_KEY_W)) {
-                    camera.getPosition().sub(new Vector3f(0, 1, 0));
-                }
-                if(win.getInput().isKeyDown(GLFW_KEY_S)) {
-                    camera.getPosition().sub(new Vector3f(0, -1, 0));
-                }
-
-                world.correctCamera(camera, win);
-
-                win.update();
                 if(frame_time >= 1.0) {
                     frame_time = 0;
                     System.out.println("FPS: " + frames);
@@ -121,18 +115,45 @@ public class Main {
             if(can_render) {
                 glClear(GL_COLOR_BUFFER_BIT);
 
-//                shader.bind();
-//                shader.setUniform("sampler", 0);
-//                shader.setUniform("projection", camera.getProjection().mul(target));
-//                tex.bind(0);
-//                model.render();
-                world.render(tiles, shader, camera);
-                win.swapBuffers();
+                shader.bind();
+                shader.setUniform("sampler", 0);
+                shader.setUniform("projection", camera.getProjection().mul(target));
+                tex.bind(0);
+                model.render();
+                player.render(shader, camera);
+                enemy.render(shader,camera);
+                window.swapBuffers();
                 frames++;
             }
         }
 
         glfwTerminate();
 
+    }
+
+    public void keyIsPressed(int key) {
+
+        switch (key) {
+            case GLFW_KEY_ESCAPE:
+                glfwSetWindowShouldClose(window.getWindow(), true);
+                break;
+            case GLFW_KEY_A:
+                player.move(new Vector3f(-10, 0, 0));
+                break;
+            case GLFW_KEY_D:
+                player.move(new Vector3f(10, 0, 0));
+                //camera.getPosition().sub(new Vector3f(1, 0, 0));
+                break;
+            case GLFW_KEY_S:
+                player.move(new Vector3f(0, -10, 0));
+                //camera.getPosition().sub(new Vector3f(0, -1, 0));
+                break;
+            case GLFW_KEY_W:
+                player.move(new Vector3f(0, 10, 0));
+                //camera.getPosition().sub(new Vector3f(0, 1, 0));
+                break;
+        }
+
+        camera.setPosition(player.getPosition().mul(-16, new Vector3f()));
     }
 }

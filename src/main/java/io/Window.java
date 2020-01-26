@@ -1,6 +1,6 @@
 package io;
 
-import io.Input;
+import game.Main;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 
@@ -10,6 +10,7 @@ public class Window {
     private long window;
 
     private int width, height;
+    private Main main;
     private boolean fullscreen;
 
     private Input input;
@@ -25,7 +26,8 @@ public class Window {
 
 
 
-    public Window() {
+    public Window(Main main) {
+        this.main = main;
         setSize(640, 480);
         setFullscreen(false);
     }
@@ -46,7 +48,7 @@ public class Window {
 
         glfwMakeContextCurrent(window);
 
-        input = new Input(window);
+        input = new Input(window , main);
 
     }
 

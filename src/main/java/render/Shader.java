@@ -87,4 +87,14 @@ public class Shader {
         }
         return string.toString();
     }
+
+    @Override
+    protected void finalize() throws Throwable {
+        glDetachShader(program, vs);
+        glDetachShader(program, fs);
+        glDeleteShader(vs);
+        glDeleteShader(fs);
+        glDeleteProgram(program);
+        super.finalize();
+    }
 }

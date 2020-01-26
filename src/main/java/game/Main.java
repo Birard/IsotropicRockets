@@ -9,6 +9,7 @@ import render.Camera;
 import render.Model;
 import render.Shader;
 import render.Texture;
+import world.Tile;
 import world.TileRenderer;
 import world.World;
 
@@ -23,8 +24,8 @@ public class Main {
         }
         Window win = new Window();
         Window.setCallbacks();
-        win.setFullscreen(true);
-        win.setSize(1366,768);
+        win.setFullscreen(false);
+        win.setSize(480,360);
         win.createWindow("Game");
 
 
@@ -63,7 +64,10 @@ public class Main {
 
         World world = new World();
 
-        camera.setPosition(new Vector3f(0, 0, 0));
+        world.setTile(Tile.test2, 0, 0);
+        world.setTile(Tile.test2, 0, 17);
+        world.setTile(Tile.test2, 17, 0);
+        world.setTile(Tile.test2, 17, 17);
 
         glClearColor(0,255,255,0);
 
@@ -103,6 +107,8 @@ public class Main {
                 if(win.getInput().isKeyDown(GLFW_KEY_S)) {
                     camera.getPosition().sub(new Vector3f(0, -1, 0));
                 }
+
+                world.correctCamera(camera, win);
 
                 win.update();
                 if(frame_time >= 1.0) {

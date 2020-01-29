@@ -15,7 +15,6 @@ public class Player {
 
     public  Player() {
         float[] vertices = new float[]{
-
                 // верхний правый треугольник
                 -0.5f, 0.5f, 0, //TOP LEFT      0
                 0.5f, 0.5f, 0,  //TOP RIGHT     1
@@ -35,7 +34,7 @@ public class Player {
                 2,3,0
         };
 
-         model = new Model(vertices, texture, indices);
+        model = new Model(vertices, texture, indices);
         this.texture = new Texture("src/main/resources/test.png");
         transform = new Transform();
         transform.scale = new Vector3f(16, 16, 1);

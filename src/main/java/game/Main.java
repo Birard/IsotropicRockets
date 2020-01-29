@@ -20,7 +20,7 @@ public class Main {
     private static Window window;
     private static Camera camera;
     private  static Player player;
-    private  static Enemy enemy;
+    private  static Enemy[] enemys;
 
     public Main() {
 
@@ -67,47 +67,56 @@ public class Main {
         Shader shader = new Shader("shader");
 
         player = new Player();
-        enemy = new Enemy();
-
-        Texture tex = new Texture("src/main/resources/test.png");
+        enemys = new Enemy[1];
+        for(int i = 0; i < enemys.length; i++) {
+            enemys[i] = new Enemy(new Vector3f(i * 0.5f+0.5f, i * 0.5f+0.5f, 0));
+        }
+        Texture tex = new Texture("src/main/resources/checker.png");
 
         Matrix4f scale = new Matrix4f().scale(100);
-        Matrix4f target;
-        target = scale;
 
         camera.setPosition(new Vector3f(0, 0, 0));
 
         glClearColor(0,255,255,0);
 
         double frame_cap = 1.0/60.0; // в одной секунде 60 кадров
+        double logic_frame_cap = 1.0/60.0;
         double frame_time = 0;
         int frames = 0;
+        int logic_frames = 0;
+
+        double time_2;
+        double passed;
 
         double time = Timer.getTime();
         double unprocessed = 0;
 
         while (!window.shouldClose()) {
             boolean can_render = false;
-            double time_2 = Timer.getTime();
-            double passed = time_2 - time;
+            time_2 = Timer.getTime();
+            passed = time_2 - time;
             unprocessed+=passed;
             frame_time +=passed;
             time = time_2;
 
+
             while (unprocessed >= frame_cap) {
+                logic_frames++;
                 unprocessed -= frame_cap;
                 can_render = true;
-                target = scale;
 
                 player.update((float)frame_cap, window, camera);
-                enemy.update((float)frame_cap);
-                enemy.move(new Vector3f(player.getPosition()));
+                for (Enemy enemy : enemys) {
+                    enemy.update((float) frame_cap);
+                    enemy.move(new Vector3f(player.getPosition()));
+                }
 
                 window.update();
 
                 if(frame_time >= 1.0) {
                     frame_time = 0;
-                    System.out.println("FPS: " + frames);
+                    System.out.println("FPS: " + frames + "   Logic: " + logic_frames);
+                    logic_frames = 0;
                     frames = 0;
                 }
             }
@@ -117,11 +126,13 @@ public class Main {
 
                 shader.bind();
                 shader.setUniform("sampler", 0);
-                shader.setUniform("projection", camera.getProjection().mul(target));
+                shader.setUniform("projection", camera.getProjection().mul(scale));
                 tex.bind(0);
                 model.render();
                 player.render(shader, camera);
-                enemy.render(shader,camera);
+                for (Enemy enemy : enemys) {
+                    enemy.render(shader, camera);
+                }
                 window.swapBuffers();
                 frames++;
             }

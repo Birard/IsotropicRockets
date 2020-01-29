@@ -88,13 +88,16 @@ public class Shader {
         return string.toString();
     }
 
-    @Override
-    protected void finalize() throws Throwable {
+    public void cleanUp() {
         glDetachShader(program, vs);
         glDetachShader(program, fs);
         glDeleteShader(vs);
         glDeleteShader(fs);
         glDeleteProgram(program);
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
         super.finalize();
     }
 }

@@ -64,10 +64,13 @@ public class Model {
 
     @Override
     protected void finalize() throws Throwable {
+        super.finalize();
+    }
+
+    public void cleanUp() {
         glDeleteBuffers(t_id);
         glDeleteBuffers(v_id);
         glDeleteBuffers(i_id);
-        super.finalize();
     }
 
     private IntBuffer createBuffer(int[] data) {

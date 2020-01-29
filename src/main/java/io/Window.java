@@ -42,6 +42,7 @@ public class Window {
 
         if(!fullscreen) {
             GLFWVidMode videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+            assert videoMode != null;
             glfwSetWindowPos(window, (videoMode.width() - width) / 2, (videoMode.height() - height) / 2);
         }
         glfwShowWindow(window);

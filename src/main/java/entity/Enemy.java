@@ -1,6 +1,5 @@
 package entity;
 
-import io.Window;
 import org.joml.Vector3f;
 import render.Camera;
 import render.Model;
@@ -16,9 +15,12 @@ public class Enemy {
     private float force;
     private float speedX;
     private float speedY;
+    private float[] vertices;
+    private float[] texturef;
+    private int[] indices;
 
-    public  Enemy() {
-        float[] vertices = new float[]{
+    public  Enemy(Vector3f pos) {
+        vertices = new float[]{
 
                 // верхний правый треугольник
                 -0.5f, 0.5f, 0, //TOP LEFT      0
@@ -27,25 +29,25 @@ public class Enemy {
                 -0.5f, -0.5f, 0, //BOTTOM LEFT  3
         };
 
-        float[] texture = new float[] {
+        texturef = new float[] {
                 0,0, // 0
                 1,0, // 1
                 1,1, // 2
                 0,1, // 3
         };
 
-        int[] indices = new int[] {
+        indices = new int[] {
                 0,1,2,
                 2,3,0
         };
 
-        model = new Model(vertices, texture, indices);
-        force = 10;
+        model = new Model(vertices, texturef, indices);
+        force = 11;
         speedX = 0;
         speedY = 0;
         this.texture = new Texture("src/main/resources/test.png");
         transform = new Transform();
-        transform.pos = new Vector3f(25, 25, 0);
+        transform.pos = pos;
         transform.scale = new Vector3f(16, 16, 1);
     }
 
@@ -63,7 +65,6 @@ public class Enemy {
 
     public void move(Vector3f playCord) {
         Vector3f vector3f = new Vector3f();
-       // System.out.println(getPosition().distance(playCord));
 
         double distanceEnPl = getPosition().distance(playCord);//= Math.sqrt(Math.pow((playCord.x - getPosition().x),2) + Math.pow((playCord.y - getPosition().y),2));
 
@@ -76,7 +77,10 @@ public class Enemy {
 
         transform.pos.add(-speedX*delta,-speedY*delta,0);
 
-        //transform.pos.add((getPosition().x-speedX)*delta,(getPosition().y-speedY)*delta,0);
+        float[] vertices = new float[this.vertices.length];
+        System.arraycopy(this.vertices, 0, vertices, 0, this.vertices.length);
+        model.cleanUp();
+        model = new Model(Transform.rotate(vertices,new Vector3f(0, -1, 0), new Vector3f((getPosition().x-vector3f.x), (getPosition().y-vector3f.y), 0)), texturef, indices);
     }
 
     public  Vector3f getPosition() {

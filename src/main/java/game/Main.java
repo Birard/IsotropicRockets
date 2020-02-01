@@ -1,6 +1,7 @@
 package game;
 
 import entity.Enemy;
+import entity.JetTraceFactory;
 import entity.Player;
 import io.Timer;
 import io.Window;
@@ -19,8 +20,8 @@ public class Main {
     private static Main thisMain;
     private static Window window;
     private static Camera camera;
-    private  static Player player;
-    private  static Enemy[] enemys;
+    private static Player player;
+    private static Enemy[] enemies;
 
     public Main() {
 
@@ -33,17 +34,18 @@ public class Main {
         window = new Window(thisMain);
         Window.setCallbacks();
         window.setFullscreen(false);
-        window.setSize(1366,768);
+        window.setSize(640,480);
         window.createWindow("Game");
 
-
         GL.createCapabilities();
+
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         camera = new Camera(window.getWidth(),window.getHeight());
         glEnable(GL_TEXTURE_2D);
 
         float[] vertices = new float[]{
-
                 // верхний правый треугольник
                 -0.5f, 0.5f, 0, //TOP LEFT      0
                 0.5f, 0.5f, 0,  //TOP RIGHT     1
@@ -66,21 +68,21 @@ public class Main {
         Model model = new Model(vertices, texture, indices);
         Shader shader = new Shader("shader");
 
+        JetTraceFactory zadGazFactory = new JetTraceFactory(500);
         player = new Player();
-        enemys = new Enemy[1];
-        for(int i = 0; i < enemys.length; i++) {
-            enemys[i] = new Enemy(new Vector3f(i * 0.5f+0.5f, i * 0.5f+0.5f, 0));
+        enemies = new Enemy[1];
+        for(int i = 0; i < enemies.length; i++) {
+            enemies[i] = new Enemy(new Vector3f(i * 0.05f+0.5f, i * 0.05f+0.5f, 0));
         }
         Texture tex = new Texture("src/main/resources/checker.png");
 
         Matrix4f scale = new Matrix4f().scale(100);
 
-        camera.setPosition(new Vector3f(0, 0, 0));
+        camera.setPosition(player.getPosition());
 
         glClearColor(0,255,255,0);
 
         double frame_cap = 1.0/60.0; // в одной секунде 60 кадров
-        double logic_frame_cap = 1.0/60.0;
         double frame_time = 0;
         int frames = 0;
         int logic_frames = 0;
@@ -91,35 +93,40 @@ public class Main {
         double time = Timer.getTime();
         double unprocessed = 0;
 
+        boolean can_render, stop = false; //
         while (!window.shouldClose()) {
-            boolean can_render = false;
+            can_render = false;
             time_2 = Timer.getTime();
             passed = time_2 - time;
             unprocessed+=passed;
             frame_time +=passed;
             time = time_2;
 
-
             while (unprocessed >= frame_cap) {
                 logic_frames++;
                 unprocessed -= frame_cap;
                 can_render = true;
 
-                player.update((float)frame_cap, window, camera);
-                for (Enemy enemy : enemys) {
-                    enemy.update((float) frame_cap);
-                    enemy.move(new Vector3f(player.getPosition()));
+                if(!stop) {
+                    player.update((float) frame_cap, window, camera);
+                    for (Enemy enemy : enemies) {
+                        if (enemy.getPosition().distance(player.getPosition()) < 1) {stop = true; break;}
+                        zadGazFactory.createJetTrace(enemy.getPosition().mul(4, new Vector3f()));
+                        enemy.update((float) frame_cap, new Vector3f(player.getPosition()));
+                    }
                 }
-
+                stop = false;
                 window.update();
-
-                if(frame_time >= 1.0) {
-                    frame_time = 0;
-                    System.out.println("FPS: " + frames + "   Logic: " + logic_frames);
-                    logic_frames = 0;
-                    frames = 0;
-                }
             }
+
+            if(frame_time >= 1.0) {
+                frame_time = 0;
+                System.out.println("FPS: " + frames + "   Logic: " + logic_frames);
+                logic_frames = 0;
+                frames = 0;
+            }
+
+            //new UpdateLogic("updateLogic", thisMain, window, camera, player, enemies).start();
 
             if(can_render) {
                 glClear(GL_COLOR_BUFFER_BIT);
@@ -129,17 +136,18 @@ public class Main {
                 shader.setUniform("projection", camera.getProjection().mul(scale));
                 tex.bind(0);
                 model.render();
+                zadGazFactory.render(shader, camera);
+
                 player.render(shader, camera);
-                for (Enemy enemy : enemys) {
+                for (Enemy enemy : enemies) {
                     enemy.render(shader, camera);
                 }
                 window.swapBuffers();
                 frames++;
             }
-        }
+            }
 
         glfwTerminate();
-
     }
 
     public void keyIsPressed(int key) {
@@ -153,18 +161,14 @@ public class Main {
                 break;
             case GLFW_KEY_D:
                 player.move(new Vector3f(10, 0, 0));
-                //camera.getPosition().sub(new Vector3f(1, 0, 0));
                 break;
             case GLFW_KEY_S:
                 player.move(new Vector3f(0, -10, 0));
-                //camera.getPosition().sub(new Vector3f(0, -1, 0));
                 break;
             case GLFW_KEY_W:
                 player.move(new Vector3f(0, 10, 0));
-                //camera.getPosition().sub(new Vector3f(0, 1, 0));
                 break;
         }
-
         camera.setPosition(player.getPosition().mul(-16, new Vector3f()));
     }
 }

@@ -73,6 +73,16 @@ public class Model {
         glDeleteBuffers(i_id);
     }
 
+    public void setVertices(float[] vertices) {
+        glDeleteBuffers(v_id);
+
+        v_id = glGenBuffers();
+        glBindBuffer(GL_ARRAY_BUFFER, v_id);
+        glBufferData(GL_ARRAY_BUFFER, createBuffer(vertices), GL_STATIC_DRAW);
+
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+    }
+
     private IntBuffer createBuffer(int[] data) {
         IntBuffer buffer = BufferUtils.createIntBuffer(data.length);
         buffer.put(data);

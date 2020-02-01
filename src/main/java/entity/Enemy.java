@@ -45,14 +45,15 @@ public class Enemy {
         force = 11;
         speedX = 0;
         speedY = 0;
-        this.texture = new Texture("src/main/resources/test.png");
+        this.texture = new Texture("src/main/resources/enemy.png");
         transform = new Transform();
         transform.pos = pos;
         transform.scale = new Vector3f(16, 16, 1);
     }
 
-    public void update(float delta) {
+    public void update(float delta, Vector3f playCord) {
         this.delta = delta;
+        move(playCord);
     }
 
     public void render(Shader shader, Camera camera) {
@@ -66,11 +67,11 @@ public class Enemy {
     public void move(Vector3f playCord) {
         Vector3f vector3f = new Vector3f();
 
-        double distanceEnPl = getPosition().distance(playCord);//= Math.sqrt(Math.pow((playCord.x - getPosition().x),2) + Math.pow((playCord.y - getPosition().y),2));
+        float distanceEnPl = getPosition().distance(playCord);//= Math.sqrt(Math.pow((playCord.x - getPosition().x),2) + Math.pow((playCord.y - getPosition().y),2));
 
-        double k = force / distanceEnPl;
-        vector3f.x = (getPosition().x + (playCord.x-getPosition().x)*(float)k);
-        vector3f.y = (getPosition().y + (playCord.y-getPosition().y)*(float)k);
+        float k = force / distanceEnPl;
+        vector3f.x = (getPosition().x + (playCord.x-getPosition().x)*k);
+        vector3f.y = (getPosition().y + (playCord.y-getPosition().y)*k);
 
         speedY = speedY + (getPosition().y-vector3f.y)*delta;
         speedX = speedX + (getPosition().x-vector3f.x)*delta;
@@ -79,9 +80,10 @@ public class Enemy {
 
         float[] vertices = new float[this.vertices.length];
         System.arraycopy(this.vertices, 0, vertices, 0, this.vertices.length);
-        model.cleanUp();
-        model = new Model(Transform.rotate(vertices,new Vector3f(0, -1, 0), new Vector3f((getPosition().x-vector3f.x), (getPosition().y-vector3f.y), 0)), texturef, indices);
-    }
+
+        model.setVertices(Transform.rotate(vertices,new Vector3f(0, -1, 0), new Vector3f((getPosition().x-vector3f.x), (getPosition().y-vector3f.y), 0)));
+
+      }
 
     public  Vector3f getPosition() {
         return  transform.getPosition();

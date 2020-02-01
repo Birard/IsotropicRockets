@@ -93,7 +93,7 @@ public class Main {
         double time = Timer.getTime();
         double unprocessed = 0;
 
-        boolean can_render, stop = false; //
+        boolean can_render;
         while (!window.shouldClose()) {
             can_render = false;
             time_2 = Timer.getTime();
@@ -108,14 +108,11 @@ public class Main {
                 can_render = true;
 
                 player.update((float) frame_cap, window, camera);
-                if(!stop) {
                     for (Enemy enemy : enemies) {
-                        if (enemy.getPosition().distance(player.getPosition()) < 1) {stop = true; player.setDead(enemy);enemies = new Enemy[0]; jetTraceFactory.deleteAll(); break;}
+                        if (enemy.getPosition().distance(player.getPosition()) < 1) {player.setDead(enemy);enemies = new Enemy[0]; jetTraceFactory.deleteAll(); break;}
                         jetTraceFactory.createJetTrace(enemy.getPosition().mul(4, new Vector3f()));
                         enemy.update((float) frame_cap, new Vector3f(player.getPosition()));
                     }
-                }
-                //stop = false;
                 window.update();
             }
 
@@ -167,6 +164,13 @@ public class Main {
                 break;
             case GLFW_KEY_W:
                 player.move(new Vector3f(0, 10, 0));
+                break;
+            case GLFW_KEY_N:
+                player = new Player();
+                enemies = new Enemy[1];
+                for(int i = 0; i < enemies.length; i++) {
+                    enemies[i] = new Enemy(new Vector3f(i * 0.05f+10f, i * 0.05f+5f, 0));
+                }
                 break;
         }
         camera.setPosition(player.getPosition().mul(-16, new Vector3f()));

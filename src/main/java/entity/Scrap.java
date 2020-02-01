@@ -6,20 +6,19 @@ import render.Model;
 import render.Shader;
 import render.Texture;
 
-public class Enemy {
+public class Scrap {
 
     private Model model;
     private Texture texture;
     private Transform transform;
     private float delta;
-    private float force;
     private float speedX;
     private float speedY;
     private float[] vertices;
     private float[] texturef;
     private int[] indices;
 
-    public  Enemy(Vector3f pos) {
+    public  Scrap(Vector3f pos, float speedX, float speedY, String name) {
         vertices = new float[]{
 
                 // верхний правый треугольник
@@ -42,18 +41,17 @@ public class Enemy {
         };
 
         model = new Model(vertices, texturef, indices);
-        force = 11;
-        speedX = 0;
-        speedY = 0;
-        this.texture = new Texture("src/main/resources/enemy.png");
+        this.speedX = speedX;
+        this.speedY = speedY;
+        this.texture = new Texture("src/main/resources/player/scraps/scrap"+name+".png");
         transform = new Transform();
         transform.pos = pos;
         transform.scale = new Vector3f(16, 16, 1);
     }
 
-    public void update(float delta, Vector3f playCord) {
+    public void update(float delta) {
         this.delta = delta;
-        move(playCord);
+        move();
     }
 
     public void render(Shader shader, Camera camera) {
@@ -64,36 +62,11 @@ public class Enemy {
         model.render();
     }
 
-    public void move(Vector3f playCord) {
-        Vector3f vector3f = new Vector3f();
-
-        float distanceEnPl = getPosition().distance(playCord);//= Math.sqrt(Math.pow((playCord.x - getPosition().x),2) + Math.pow((playCord.y - getPosition().y),2));
-
-        float k = force / distanceEnPl;
-        vector3f.x = (getPosition().x + (playCord.x-getPosition().x)*k);
-        vector3f.y = (getPosition().y + (playCord.y-getPosition().y)*k);
-
-        speedY = speedY + (getPosition().y-vector3f.y)*delta;
-        speedX = speedX + (getPosition().x-vector3f.x)*delta;
-
+    public void move() {
         transform.pos.add(-speedX*delta,-speedY*delta,0);
-
-        float[] vertices = new float[this.vertices.length];
-        System.arraycopy(this.vertices, 0, vertices, 0, this.vertices.length);
-
-        model.setVertices(Transform.rotate(vertices,new Vector3f(0, -1, 0), new Vector3f((getPosition().x-vector3f.x), (getPosition().y-vector3f.y), 0)));
-
-      }
+    }
 
     public  Vector3f getPosition() {
         return  transform.getPosition();
-    }
-
-    public float getSpeedX() {
-        return speedX;
-    }
-
-    public float getSpeedY() {
-        return speedY;
     }
 }

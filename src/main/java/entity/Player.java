@@ -13,6 +13,7 @@ public class Player {
     private Transform transform;
     private float delta;
     private boolean alive;
+    private Scrap[] scraps;
 
     public  Player() {
         float[] vertices = new float[]{
@@ -34,16 +35,19 @@ public class Player {
                 0,1,2,
                 2,3,0
         };
-
+        scraps = new Scrap[0];
         alive = true;
         model = new Model(vertices, texture, indices);
-        this.texture = new Texture("src/main/resources/player.png");
+        this.texture = new Texture("src/main/resources/player/player.png");
         transform = new Transform();
         transform.scale = new Vector3f(16, 16, 1);
     }
 
     public void update(float delta, Window window, Camera camera) {
         this.delta = delta;
+        for (Scrap scrap : scraps) {
+            scrap.update(delta);
+        }
     }
 
     public void render(Shader shader, Camera camera) {
@@ -52,6 +56,9 @@ public class Player {
         shader.setUniform("projection",transform.getProjection(camera.getProjection()));
         texture.bind(0);
         model.render();
+        for (Scrap scrap : scraps) {
+            scrap.render(shader, camera);
+        }
     }
 
     public void move(Vector3f vector3f) {
@@ -61,11 +68,21 @@ public class Player {
         }
     }
 
-    public void setDead(Vector3f enemy) {
+    public void setDead(Enemy enemy) {
         alive = false;
+
+        scraps = new Scrap[5];
+
+        scraps[0] = new Scrap(getPosition(), (float)Math.random()*2-1+enemy.getSpeedX()/5,(float)Math.random()*2-1+enemy.getSpeedY()/5, "0");
+        scraps[1] = new Scrap(getPosition(), (float)Math.random()*2-1+enemy.getSpeedX()/5,(float)Math.random()*2-1+enemy.getSpeedY()/5, "1");
+        scraps[2] = new Scrap(getPosition(), (float)Math.random()*2-1+enemy.getSpeedX()/5,(float)Math.random()*2-1+enemy.getSpeedY()/5, "2");
+        scraps[3] = new Scrap(getPosition(), (float)Math.random()*2-1+enemy.getSpeedX()/5,(float)Math.random()*2-1+enemy.getSpeedY()/5, "3");
+        scraps[4] = new Scrap(getPosition(), (float)Math.random()*2-1+enemy.getSpeedX()/5,(float)Math.random()*2-1+enemy.getSpeedY()/5, "4");
+
+        model.setVertices(new float[]{0,0,0,0,0,0,0,0,0,0,0,0});
     }
 
     public  Vector3f getPosition() {
-        return  transform.getPosition();
+        return  new Vector3f(transform.getPosition());
     }
 }

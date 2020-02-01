@@ -49,4 +49,11 @@ public class JetTraceFactory {
             jetTraces[i].render(shader, camera);
         }
     }
+
+    public void deleteAll() {
+        full = false;
+        this.maxJetTrace = maxJetTrace;
+        jetTraces = new JetTrace[maxJetTrace];
+        nowJetTrace = 0;
+    }
 }

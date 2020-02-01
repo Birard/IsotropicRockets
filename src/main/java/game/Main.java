@@ -68,11 +68,11 @@ public class Main {
         Model model = new Model(vertices, texture, indices);
         Shader shader = new Shader("shader");
 
-        JetTraceFactory zadGazFactory = new JetTraceFactory(500);
+        JetTraceFactory jetTraceFactory = new JetTraceFactory(500);
         player = new Player();
         enemies = new Enemy[1];
         for(int i = 0; i < enemies.length; i++) {
-            enemies[i] = new Enemy(new Vector3f(i * 0.05f+0.5f, i * 0.05f+0.5f, 0));
+            enemies[i] = new Enemy(new Vector3f(i * 0.05f+10f, i * 0.05f+5f, 0));
         }
         Texture tex = new Texture("src/main/resources/checker.png");
 
@@ -107,15 +107,15 @@ public class Main {
                 unprocessed -= frame_cap;
                 can_render = true;
 
+                player.update((float) frame_cap, window, camera);
                 if(!stop) {
-                    player.update((float) frame_cap, window, camera);
                     for (Enemy enemy : enemies) {
-                        if (enemy.getPosition().distance(player.getPosition()) < 1) {stop = true; break;}
-                        zadGazFactory.createJetTrace(enemy.getPosition().mul(4, new Vector3f()));
+                        if (enemy.getPosition().distance(player.getPosition()) < 1) {stop = true; player.setDead(enemy);enemies = new Enemy[0]; jetTraceFactory.deleteAll(); break;}
+                        jetTraceFactory.createJetTrace(enemy.getPosition().mul(4, new Vector3f()));
                         enemy.update((float) frame_cap, new Vector3f(player.getPosition()));
                     }
                 }
-                stop = false;
+                //stop = false;
                 window.update();
             }
 
@@ -136,7 +136,7 @@ public class Main {
                 shader.setUniform("projection", camera.getProjection().mul(scale));
                 tex.bind(0);
                 model.render();
-                zadGazFactory.render(shader, camera);
+                jetTraceFactory.render(shader, camera);
 
                 player.render(shader, camera);
                 for (Enemy enemy : enemies) {

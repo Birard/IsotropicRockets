@@ -1,12 +1,14 @@
 package entity;
 
+import entity.interfaces.IMove;
+import entity.interfaces.IRender;
 import org.joml.Vector3f;
 import render.Camera;
 import render.Model;
 import render.Shader;
 import render.Texture;
 
-public class Scrap {
+public class Scrap implements IMove, IRender {
 
     private Model model;
     private Texture texture;
@@ -18,7 +20,7 @@ public class Scrap {
     private float[] texturef;
     private int[] indices;
 
-    public  Scrap(Vector3f pos, float speedX, float speedY, String name) {
+    public Scrap(Vector3f pos, float speedX, float speedY, String name) {
         vertices = new float[]{
 
                 // верхний правый треугольник
@@ -28,22 +30,22 @@ public class Scrap {
                 -0.5f, -0.5f, 0, //BOTTOM LEFT  3
         };
 
-        texturef = new float[] {
-                0,0, // 0
-                1,0, // 1
-                1,1, // 2
-                0,1, // 3
+        texturef = new float[]{
+                0, 0, // 0
+                1, 0, // 1
+                1, 1, // 2
+                0, 1, // 3
         };
 
-        indices = new int[] {
-                0,1,2,
-                2,3,0
+        indices = new int[]{
+                0, 1, 2,
+                2, 3, 0
         };
 
         model = new Model(vertices, texturef, indices);
         this.speedX = speedX;
         this.speedY = speedY;
-        this.texture = new Texture("src/main/resources/player/scraps/scrap"+name+".png");
+        this.texture = new Texture("src/main/resources/player/scraps/scrap" + name + ".png");
         transform = new Transform();
         transform.pos = pos;
         transform.scale = new Vector3f(16, 16, 1);
@@ -54,19 +56,21 @@ public class Scrap {
         move();
     }
 
+    @Override
     public void render(Shader shader, Camera camera) {
         shader.bind();
         shader.setUniform("sampler", 0);
-        shader.setUniform("projection",transform.getProjection(camera.getProjection()));
+        shader.setUniform("projection", transform.getProjection(camera.getProjection()));
         texture.bind(0);
         model.render();
     }
 
+    @Override
     public void move() {
-        transform.pos.add(-speedX*delta,-speedY*delta,0);
+        transform.pos.add(-speedX * delta, -speedY * delta, 0);
     }
 
-    public  Vector3f getPosition() {
-        return  transform.getPosition();
+    public Vector3f getPosition() {
+        return transform.getPosition();
     }
 }

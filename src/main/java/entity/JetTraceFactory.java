@@ -18,8 +18,8 @@ public class JetTraceFactory {
     }
 
     public void createJetTrace(Vector3f pos) {
-        if(full) {
-            if(nowJetTrace == maxJetTrace) {
+        if (full) {
+            if (nowJetTrace == maxJetTrace) {
                 nowJetTrace = 0;
             }
             jetTraces[nowJetTrace].setPos(pos);
@@ -29,7 +29,7 @@ public class JetTraceFactory {
         }
 
 
-        if(nowJetTrace < maxJetTrace) {
+        if (nowJetTrace < maxJetTrace) {
             jetTraces[nowJetTrace] = new JetTrace(pos);
             nowJetTrace++;
         } else {
@@ -40,20 +40,18 @@ public class JetTraceFactory {
     }
 
     public void render(Shader shader, Camera camera) {
-        if(full) {
-            for(int i = 0; i < maxJetTrace; i++) {
+        if (full) {
+            for (int i = 0; i < maxJetTrace; i++) {
                 jetTraces[i].render(shader, camera);
             }
         } else
-        for(int i = 0; i < nowJetTrace; i++) {
-            jetTraces[i].render(shader, camera);
-        }
+            for (int i = 0; i < nowJetTrace; i++) {
+                jetTraces[i].render(shader, camera);
+            }
     }
 
     public void deleteAll() {
         full = false;
-        this.maxJetTrace = maxJetTrace;
-        jetTraces = new JetTrace[maxJetTrace];
         nowJetTrace = 0;
     }
 }

@@ -20,34 +20,34 @@ public class Shader {
         program = glCreateProgram();
 
         vs = glCreateShader(GL_VERTEX_SHADER);
-        glShaderSource(vs, readFile(filename+".vs"));
+        glShaderSource(vs, readFile(filename + ".vs"));
         glCompileShader(vs);
-        if(glGetShaderi(vs,GL_COMPILE_STATUS) != 1) {
+        if (glGetShaderi(vs, GL_COMPILE_STATUS) != 1) {
             System.err.println(glGetShaderInfoLog(vs));
             System.exit(1);
         }
 
         fs = glCreateShader(GL_FRAGMENT_SHADER);
-        glShaderSource(fs, readFile(filename+".fs"));
+        glShaderSource(fs, readFile(filename + ".fs"));
         glCompileShader(fs);
-        if(glGetShaderi(fs,GL_COMPILE_STATUS) != 1) {
+        if (glGetShaderi(fs, GL_COMPILE_STATUS) != 1) {
             System.err.println(glGetShaderInfoLog(fs));
             System.exit(1);
         }
 
-        glAttachShader(program,vs);
-        glAttachShader(program,fs);
+        glAttachShader(program, vs);
+        glAttachShader(program, fs);
 
         glBindAttribLocation(program, 0, "vertices");
         glBindAttribLocation(program, 1, "textures");
 
         glLinkProgram(program);
-        if(glGetProgrami(program,GL_LINK_STATUS) != 1) {
+        if (glGetProgrami(program, GL_LINK_STATUS) != 1) {
             System.err.println(glGetProgramInfoLog(program));
             System.exit(1);
         }
         glValidateProgram(program);
-        if(glGetProgrami(program,GL_VALIDATE_STATUS) != 1) {
+        if (glGetProgrami(program, GL_VALIDATE_STATUS) != 1) {
             System.err.println(glGetProgramInfoLog(program));
             System.exit(1);
         }
@@ -55,7 +55,7 @@ public class Shader {
 
     public void setUniform(String name, int value) {
         int location = glGetUniformLocation(program, name);
-        if(location != -1)
+        if (location != -1)
             glUniform1i(location, value);
     }
 
@@ -63,7 +63,7 @@ public class Shader {
         int location = glGetUniformLocation(program, name);
         FloatBuffer buffer = BufferUtils.createFloatBuffer(16);
         value.get(buffer);
-        if(location != -1)
+        if (location != -1)
             glUniformMatrix4fv(location, false, buffer);
     }
 
@@ -77,7 +77,7 @@ public class Shader {
         try {
             br = new BufferedReader(new FileReader(new File("src/main/shaders/" + filename)));
             String line;
-            while((line = br.readLine()) != null) {
+            while ((line = br.readLine()) != null) {
                 string.append(line);
                 string.append("\n");
             }

@@ -1,5 +1,7 @@
 package entity;
 
+import entity.interfaces.IMove;
+import entity.interfaces.IRender;
 import io.Window;
 import org.joml.Vector3f;
 import render.Camera;
@@ -7,15 +9,17 @@ import render.Model;
 import render.Shader;
 import render.Texture;
 
-public class Player {
+public class Player implements IMove, IRender {
     private Model model;
     private Texture texture;
     private Transform transform;
     private float delta;
+    private float speedX;
+    private float speedY;
     private boolean alive;
     private Scrap[] scraps;
 
-    public  Player() {
+    public Player() {
         float[] vertices = new float[]{
                 // верхний правый треугольник
                 -0.5f, 0.5f, 0, //TOP LEFT      0
@@ -24,16 +28,16 @@ public class Player {
                 -0.5f, -0.5f, 0, //BOTTOM LEFT  3
         };
 
-        float[] texture = new float[] {
-                0,0, // 0
-                1,0, // 1
-                1,1, // 2
-                0,1, // 3
+        float[] texture = new float[]{
+                0, 0, // 0
+                1, 0, // 1
+                1, 1, // 2
+                0, 1, // 3
         };
 
-        int[] indices = new int[] {
-                0,1,2,
-                2,3,0
+        int[] indices = new int[]{
+                0, 1, 2,
+                2, 3, 0
         };
         scraps = new Scrap[0];
         alive = true;
@@ -48,12 +52,16 @@ public class Player {
         for (Scrap scrap : scraps) {
             scrap.update(delta);
         }
+        move();
+        speedX = 0;
+        speedY = 0;
     }
 
+    @Override
     public void render(Shader shader, Camera camera) {
         shader.bind();
         shader.setUniform("sampler", 0);
-        shader.setUniform("projection",transform.getProjection(camera.getProjection()));
+        shader.setUniform("projection", transform.getProjection(camera.getProjection()));
         texture.bind(0);
         model.render();
         for (Scrap scrap : scraps) {
@@ -61,11 +69,15 @@ public class Player {
         }
     }
 
-    public void move(Vector3f vector3f) {
+    @Override
+    public void move() {
         if (alive) {
-            vector3f.mul(delta);
-            transform.pos.add(vector3f);
+            transform.pos.add(speedX * delta, speedY * delta, 0);
         }
+    }
+
+    public boolean isAlive() {
+        return alive;
     }
 
     public void setDead(Enemy enemy) {
@@ -73,16 +85,24 @@ public class Player {
 
         scraps = new Scrap[5];
 
-        scraps[0] = new Scrap(getPosition(), (float)Math.random()*2-1+enemy.getSpeedX()/5,(float)Math.random()*2-1+enemy.getSpeedY()/5, "0");
-        scraps[1] = new Scrap(getPosition(), (float)Math.random()*2-1+enemy.getSpeedX()/5,(float)Math.random()*2-1+enemy.getSpeedY()/5, "1");
-        scraps[2] = new Scrap(getPosition(), (float)Math.random()*2-1+enemy.getSpeedX()/5,(float)Math.random()*2-1+enemy.getSpeedY()/5, "2");
-        scraps[3] = new Scrap(getPosition(), (float)Math.random()*2-1+enemy.getSpeedX()/5,(float)Math.random()*2-1+enemy.getSpeedY()/5, "3");
-        scraps[4] = new Scrap(getPosition(), (float)Math.random()*2-1+enemy.getSpeedX()/5,(float)Math.random()*2-1+enemy.getSpeedY()/5, "4");
+        scraps[0] = new Scrap(getPosition(), (float) Math.random() * 2 - 1 - enemy.getSpeedX() / 3, (float) Math.random() * 2 - 1 - enemy.getSpeedY() / 3, "0");
+        scraps[1] = new Scrap(getPosition(), (float) Math.random() * 2 - 1 - enemy.getSpeedX() / 3, (float) Math.random() * 2 - 1 - enemy.getSpeedY() / 3, "1");
+        scraps[2] = new Scrap(getPosition(), (float) Math.random() * 2 - 1 - enemy.getSpeedX() / 3, (float) Math.random() * 2 - 1 - enemy.getSpeedY() / 3, "2");
+        scraps[3] = new Scrap(getPosition(), (float) Math.random() * 2 - 1 - enemy.getSpeedX() / 3, (float) Math.random() * 2 - 1 - enemy.getSpeedY() / 3, "3");
+        scraps[4] = new Scrap(getPosition(), (float) Math.random() * 2 - 1 - enemy.getSpeedX() / 3, (float) Math.random() * 2 - 1 - enemy.getSpeedY() / 3, "4");
 
-        model.setVertices(new float[]{0,0,0,0,0,0,0,0,0,0,0,0});
+        model.setVertices(new float[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0});
     }
 
-    public  Vector3f getPosition() {
-        return  new Vector3f(transform.getPosition());
+    public void setSpeedX(float speedX) {
+        this.speedX = speedX;
+    }
+
+    public void setSpeedY(float speedY) {
+        this.speedY = speedY;
+    }
+
+    public Vector3f getPosition() {
+        return new Vector3f(transform.getPosition());
     }
 }

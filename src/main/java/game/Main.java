@@ -109,6 +109,7 @@ public class Main {
                 can_render = true;
 
                 player.update((float) frame_cap, window, camera);
+                //camera.setPosition(player.getPosition().mul(-16, new Vector3f()));
                 for (Enemy enemy : enemies) {
                     if (enemy.getPosition().distance(player.getPosition()) < 1) {
                         player.setDead(enemy);
@@ -179,6 +180,5 @@ public class Main {
                 }
                 break;
         }
-        camera.setPosition(player.getPosition().mul(-16, new Vector3f()));
     }
 }

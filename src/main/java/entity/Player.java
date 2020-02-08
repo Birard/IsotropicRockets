@@ -45,6 +45,8 @@ public class Player implements IMove, IRender {
         this.texture = new Texture("src/main/resources/player/player.png");
         transform = new Transform();
         transform.scale = new Vector3f(16, 16, 1);
+        speedX = 10;
+        speedY = 0;
     }
 
     public void update(float delta, Window window, Camera camera) {
@@ -53,8 +55,8 @@ public class Player implements IMove, IRender {
             scrap.update(delta);
         }
         move();
-        speedX = 0;
-        speedY = 0;
+//        speedX = 0;
+//        speedY = 0;
     }
 
     @Override
@@ -95,11 +97,11 @@ public class Player implements IMove, IRender {
     }
 
     public void setSpeedX(float speedX) {
-        this.speedX = speedX;
+        this.speedX = speedX; speedY = 0;
     }
 
     public void setSpeedY(float speedY) {
-        this.speedY = speedY;
+        this.speedY = speedY; speedX = 0;
     }
 
     public Vector3f getPosition() {

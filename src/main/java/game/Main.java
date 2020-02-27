@@ -3,6 +3,7 @@ package game;
 import entity.Enemy;
 import entity.JetTraceFactory;
 import entity.Player;
+import entity.interfaces.JetPlayer;
 import io.Timer;
 import io.Window;
 import org.joml.Matrix4f;
@@ -17,18 +18,20 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 
 public class Main {
-    private static Main thisMain;
     private static Window window;
-    private static Camera camera;
     private static Player player;
     private static Enemy[] enemies;
+    private static boolean immortal;
+    private static double startTime;
+    private static double timeFromLastPressImmortal;
 
     public Main() {
 
     }
 
     public static void main(String[] args) {
-        thisMain = new Main();
+        timeFromLastPressImmortal = -1000000;
+        Main thisMain = new Main();
         if (!glfwInit()) {
             throw new IllegalStateException("Failed to initialize");
         }
@@ -43,7 +46,7 @@ public class Main {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        camera = new Camera(window.getWidth(), window.getHeight());
+        Camera camera = new Camera(window.getWidth(), window.getHeight());
         glEnable(GL_TEXTURE_2D);
 
         float[] vertices = new float[]{
@@ -70,7 +73,8 @@ public class Main {
         Shader shader = new Shader("shader");
 
         JetTraceFactory jetTraceFactory = new JetTraceFactory(100);
-        player = new Player();
+        immortal = false;
+        player = new JetPlayer();
         enemies = new Enemy[1];
         for (int i = 0; i < enemies.length; i++) {
             enemies[i] = new Enemy(new Vector3f(i * 0.05f + 10f, i * 0.05f + 5f, 0));
@@ -86,14 +90,13 @@ public class Main {
         double frame_cap = 1.0 / 60.0; // в одной секунде 60 кадров
         double frame_time = 0;
         int frames = 0;
-        int logic_frames = 0;
 
         double time_2;
         double passed;
 
         double time = Timer.getTime();
         double unprocessed = 0;
-
+        startTime = Timer.getTime();
         boolean can_render;
         while (!window.shouldClose()) {
             can_render = false;
@@ -104,33 +107,45 @@ public class Main {
             time = time_2;
 
             while (unprocessed >= frame_cap) {
-                logic_frames++;
                 unprocessed -= frame_cap;
                 can_render = true;
 
-                player.update((float) frame_cap, window, camera);
-                //camera.setPosition(player.getPosition().mul(-16, new Vector3f()));
+                player.update((float) frame_cap);
+                jetTraceFactory.createJetTrace(player.getPosition().mul(4, new Vector3f()));
+                camera.setPosition(player.getPosition().mul(-16, new Vector3f()));
                 for (Enemy enemy : enemies) {
-                    if (enemy.getPosition().distance(player.getPosition()) < 1) {
+                    if (enemy.getPosition().distance(player.getPosition()) < 1.3 && !immortal) {
                         player.setDead(enemy);
                         enemies = new Enemy[0];
                         jetTraceFactory.deleteAll();
+                        System.out.println("Your time:" + ( Timer.getTime() - startTime));
                         break;
                     }
                     jetTraceFactory.createJetTrace(enemy.getPosition().mul(4, new Vector3f()));
-                    enemy.update((float) frame_cap, new Vector3f(player.getPosition()));
+                    Vector3f playerCord = new Vector3f(player.getPosition());
+                    float distance = enemy.getPosition().distance(player.getPosition());
+                    if (distance < 4) {
+                        playerCord.x = playerCord.x + player.getSpeedX() / 5;
+                        playerCord.y = playerCord.y + player.getSpeedY() / 5;
+                    }
+                    if (distance > 5) {
+                        playerCord.x = playerCord.x + player.getSpeedX() / 3 - enemy.getSpeedX() / 3;
+                        playerCord.y = playerCord.y + player.getSpeedY() / 3 - enemy.getSpeedY() / 3;
+                    }
+                    if (distance > 10) {
+                        playerCord.x = playerCord.x + player.getSpeedX()/2 - enemy.getSpeedX()/2;
+                        playerCord.y = playerCord.y + player.getSpeedY()/2 - enemy.getSpeedY()/2;
+                    }
+                    enemy.update((float) frame_cap, playerCord);
                 }
                 window.update();
             }
 
             if (frame_time >= 1.0) {
                 frame_time = 0;
-                System.out.println("FPS: " + frames + "   Logic: " + logic_frames);
-                logic_frames = 0;
+               // System.out.println("FPS: " + frames + "   Logic: " + logic_frames);
                 frames = 0;
             }
-
-            //new UpdateLogic("updateLogic", thisMain, window, camera, player, enemies).start();
 
             if (can_render) {
                 glClear(GL_COLOR_BUFFER_BIT);
@@ -161,23 +176,32 @@ public class Main {
                 glfwSetWindowShouldClose(window.getWindow(), true);
                 break;
             case GLFW_KEY_A:
-                player.setSpeedX(-10f);
+                player.setSpeedX(-11f);
                 break;
             case GLFW_KEY_D:
-                player.setSpeedX(10f);
+                player.setSpeedX(11f);
                 break;
             case GLFW_KEY_S:
-                player.setSpeedY(-10f);
+                player.setSpeedY(-11f);
                 break;
             case GLFW_KEY_W:
-                player.setSpeedY(10f);
+                player.setSpeedY(11f);
                 break;
             case GLFW_KEY_N:
-                player = new Player();
+                startTime = Timer.getTime();
+                player.setAlive();// = new JetPlayer();
                 enemies = new Enemy[1];
                 for (int i = 0; i < enemies.length; i++) {
-                    enemies[i] = new Enemy(new Vector3f(i * 0.05f + 10f, i * 0.05f + 5f, 0));
+                    enemies[i] = new Enemy(new Vector3f(i * 0.05f + 20f, i * 0.05f + 20f, 0));
                 }
+                break;
+
+            case GLFW_KEY_I:
+                if((timeFromLastPressImmortal- Timer.getTime()) < 1) {
+                immortal = !immortal;
+                timeFromLastPressImmortal = Timer.getTime();
+                }
+
                 break;
         }
     }

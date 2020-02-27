@@ -31,39 +31,6 @@ public class Transform {
         return vertices;
     }
 
-
-    // надо удалить
-    public static float[] rotate(float[] vertices, Vector3f xVector, Vector3f rotateTo) {
-
-        boolean changeAngleSign = false;
-        if (rotateTo.x < 0) {
-            rotateTo.x = -rotateTo.x;
-            changeAngleSign = true;
-        }
-
-        double skaljar = xVector.x * rotateTo.x + xVector.y * rotateTo.y;
-        double cosA = skaljar / (xVector.length() * rotateTo.length());
-
-        double angle = (Math.acos(cosA));
-
-        if (changeAngleSign) angle = -angle;
-
-        cosA = Math.cos(angle);
-        double sinA = Math.sin(angle);
-
-
-        for (int i = 0; i < vertices.length / 3; i++) {
-            double x = vertices[i * 3];
-            double y = vertices[1 + i * 3];
-
-            vertices[i * 3] = (float) (x * cosA - y * sinA);
-            vertices[1 + i * 3] = (float) (y * cosA + x * sinA);
-//          vertices[2+i*3] = vertices[2+i*3];
-        }
-
-        return vertices;
-    }
-
     public Vector3f rotate(Vector3f vector, float angle) {
         float[] vertices = new float[3];
         vertices[0] = vector.x;

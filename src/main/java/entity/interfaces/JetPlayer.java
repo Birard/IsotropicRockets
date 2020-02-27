@@ -1,8 +1,9 @@
-package entity;
+package entity.interfaces;
 
-import entity.interfaces.IAlive;
-import entity.interfaces.IMove;
-import entity.interfaces.IRender;
+import entity.Enemy;
+import entity.Player;
+import entity.Scrap;
+import entity.Transform;
 import io.Window;
 import org.joml.Vector3f;
 import render.Camera;
@@ -10,18 +11,23 @@ import render.Model;
 import render.Shader;
 import render.Texture;
 
-public class Player implements IMove, IRender, IAlive {
+public class JetPlayer extends Player implements IMove, IRender, IAlive{
     private Model model;
     private Texture texture;
     private Transform transform;
     private float delta;
     private float speedX;
     private float speedY;
+    private float angle;
+    private float force;
     private boolean alive;
+    private float[] vertices;
+    private float[] texturef;
+    private int[] indices;
     private Scrap[] scraps;
 
-    public Player() {
-        float[] vertices = new float[]{
+    public JetPlayer() {
+        vertices = new float[]{
                 // верхний правый треугольник
                 -0.5f, 0.5f, 0, //TOP LEFT      0
                 0.5f, 0.5f, 0,  //TOP RIGHT     1
@@ -29,7 +35,7 @@ public class Player implements IMove, IRender, IAlive {
                 -0.5f, -0.5f, 0, //BOTTOM LEFT  3
         };
 
-        float[] texture = new float[]{
+        texturef = new float[]{
                 0, 0, // 0
                 1, 0, // 1
                 1, 1, // 2
@@ -42,12 +48,14 @@ public class Player implements IMove, IRender, IAlive {
         };
         scraps = new Scrap[0];
         alive = true;
-        model = new Model(vertices, texture, indices);
-        this.texture = new Texture("src/main/resources/player/player.png");
+        model = new Model(vertices, texturef, indices);
+        this.texture = new Texture("src/main/resources/enemy.png");
         transform = new Transform();
         transform.scale = new Vector3f(16, 16, 1);
+        force = 10;
         speedX = -10;
         speedY = 0;
+        angle = 0;
     }
 
     public void update(float delta) {
@@ -75,16 +83,31 @@ public class Player implements IMove, IRender, IAlive {
     @Override
     public void move() {
         if (alive) {
-            transform.pos.add(speedX * delta, speedY * delta, 0);
+            Vector3f vectorF = new Vector3f(0, force, 0);
+            vectorF = transform.rotate(vectorF, angle);
+
+            float k = (float) 0.4;
+
+            speedY = speedY + ((vectorF.y - speedY*k) * delta);
+            speedX = speedX + ((vectorF.x - speedX*k) * delta);
+
+            transform.pos.add((speedX) * delta, speedY * delta, 0);
+
+            float[] vertices = new float[this.vertices.length];
+            System.arraycopy(this.vertices, 0, vertices, 0, this.vertices.length);
+
+            model.setVertices(Transform.rotate(vertices, angle));
         }
     }
+
     @Override
     public boolean isAlive() {
         return alive;
     }
+
     @Override
     public void setAlive() {
-        float[] vertices = new float[]{
+        vertices = new float[]{
                 // верхний правый треугольник
                 -0.5f, 0.5f, 0, //TOP LEFT      0
                 0.5f, 0.5f, 0,  //TOP RIGHT     1
@@ -92,7 +115,7 @@ public class Player implements IMove, IRender, IAlive {
                 -0.5f, -0.5f, 0, //BOTTOM LEFT  3
         };
 
-        float[] texture = new float[]{
+        texturef = new float[]{
                 0, 0, // 0
                 1, 0, // 1
                 1, 1, // 2
@@ -105,13 +128,16 @@ public class Player implements IMove, IRender, IAlive {
         };
         scraps = new Scrap[0];
         alive = true;
-        model = new Model(vertices, texture, indices);
-        this.texture = new Texture("src/main/resources/player/player.png");
+        model = new Model(vertices, texturef, indices);
+        this.texture = new Texture("src/main/resources/enemy.png");
         transform = new Transform();
         transform.scale = new Vector3f(16, 16, 1);
+        force = 10;
         speedX = -10;
         speedY = 0;
+        angle = 0;
     }
+
     @Override
     public void setDead(Enemy enemy) {
         alive = false;
@@ -127,12 +153,24 @@ public class Player implements IMove, IRender, IAlive {
         model.setVertices(new float[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0});
     }
 
+    public void moveAngleToLeft() {
+        angle += 0.2;
+      /////////////
+    }
+
+    public void moveAngleToRight() {
+       angle -= 0.2;
+        ////////////
+    }
+
     public void setSpeedX(float speedX) {
-        this.speedX = speedX; speedY = 0;
+       if(speedX < 0) moveAngleToLeft();
+       else moveAngleToRight();
+        //this.speedX = speedX; speedY = 0;
     }
 
     public void setSpeedY(float speedY) {
-        this.speedY = speedY; speedX = 0;
+        //this.speedY = speedY; speedX = 0;
     }
 
     public Vector3f getPosition() {

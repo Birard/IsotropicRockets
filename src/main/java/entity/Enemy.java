@@ -46,7 +46,7 @@ public class Enemy implements IMove, IRender {
         };
 
         model = new Model(vertices, texturef, indices);
-        force = 11;
+        force = 20;
         speedX = 0;
         speedY = 0;
         this.texture = new Texture("src/main/resources/enemy.png");
@@ -66,6 +66,7 @@ public class Enemy implements IMove, IRender {
 
     public void update(float delta) {
         this.delta = delta;
+        setAngle();
         move();
     }
 
@@ -115,13 +116,15 @@ public class Enemy implements IMove, IRender {
 
     @Override
     public void move() {
-        Vector3f vector3f = new Vector3f(0, force, 0);
-        vector3f = transform.rotate(vector3f, angle);
+        Vector3f vectorF = new Vector3f(0, force, 0);
+        vectorF = transform.rotate(vectorF, angle);
 
-        speedY = speedY + (vector3f.y) * delta;
-        speedX = speedX + (vector3f.x) * delta;
+        float k = (float) 0.4;
 
-        transform.pos.add(speedX * delta, speedY * delta, 0);
+        speedY = speedY + ((vectorF.y - speedY*k) * delta);
+        speedX = speedX + ((vectorF.x - speedX*k) * delta);
+
+        transform.pos.add((speedX) * delta, speedY * delta, 0);
 
         float[] vertices = new float[this.vertices.length];
         System.arraycopy(this.vertices, 0, vertices, 0, this.vertices.length);
@@ -130,7 +133,11 @@ public class Enemy implements IMove, IRender {
     }
 
     public Vector3f getPosition() {
-        return transform.getPosition();
+       return transform.getPosition();
+    }
+
+    public Vector3f getTargetCord() {
+        return new Vector3f(targetCord);
     }
 
     public float getSpeedX() {

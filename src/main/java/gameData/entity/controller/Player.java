@@ -3,11 +3,13 @@ package gameData.entity.controller;
 import engine.entity.interfaces.IAlive;
 import engine.entity.interfaces.IMove;
 import engine.entity.interfaces.IRender;
+import engine.game.Main;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import engine.render.*;
 
 public class Player implements IMove, IRender, IAlive {
+    public static final Player player = new Player();
     private Model model;
 //    private Texture texture;
     private Animation texture;
@@ -45,12 +47,12 @@ public class Player implements IMove, IRender, IAlive {
 //       // this.texture = new Texture("src/main/resources/player/player.png");
         transform = new Transform();
         transform.scale = new Matrix4f().scale(16);
-        speedX = -220;
+        speedX = -22;
         speedY = 0;
     }
 
-    public void update(float delta) {
-        this.delta = delta;
+    public void update() {
+        this.delta = (float)Main.frame_cap;
         for (Scrap scrap : scraps) {
             scrap.update(delta);
         }

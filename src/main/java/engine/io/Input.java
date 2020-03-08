@@ -5,13 +5,15 @@ import engine.game.Main;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_LAST;
 import static org.lwjgl.glfw.GLFW.glfwGetKey;
 
-public class Input {
+public class Input extends Thread {
+    private static boolean alive = true;
+    public static final Input input = new Input();
     private long window;
 
     private boolean[] keys;
 
-    public Input(long window) {
-        this.window = window;
+    public Input() {
+        this.window = Window.windows.getWindow();
         this.keys = new boolean[GLFW_KEY_LAST];
         for (int i = 0; i < GLFW_KEY_LAST; i++)
             keys[i] = false;
@@ -25,14 +27,21 @@ public class Input {
         return (isKeyDown(key) && !keys[key]);
     }
 
-    public void update() {
+    public void run() {
+        while (alive)
         for (int i = 32; i < GLFW_KEY_LAST; i++) {
             keys[i] = isKeyDown(i);
             if (keys[i]) Main.thisMain.keyIsPressed(i);
         }
-
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
     }
 
-
+    public static void setAlive(boolean alive) {
+        Input.alive = alive;
+    }
 }

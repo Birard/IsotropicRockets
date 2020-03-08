@@ -1,26 +1,20 @@
 package engine.actors;
 
-import engine.entity.interfaces.IMove;
-import engine.entity.interfaces.IRender;
-import gameData.entity.controller.JetTrace;
+
+import gameData.entity.controller.Enemy;
 import org.joml.Vector3f;
 
 public class ActorFactory {
-    private IRender[] iRender;
-    private int numberIMoves = 1000;
+    public static final int numberIMoves = 100;
+    public static final Enemy[] iRender = new Enemy[numberIMoves];
     private Actor[] actors;
-    private int numberActors = 1;
+    private int numberActors = 100;
 
-    public ActorFactory() {
-        iRender = new IRender[numberIMoves];
+    public ActorFactory(int numberEnemy) {
         for(int i = 0; i < numberIMoves; i++){
-            iRender[i] = new JetTrace(new Vector3f((float)Math.random()*200-100,(float)Math.random()*200-100,0));
+            iRender[i] = new Enemy(new Vector3f(i * 10f + 1000f, i * 10f + 500f, 0));
         }
-
         actors = new Actor[numberActors];
-        for(int i = 0; i < numberActors; i++){
-            actors[i] = new Actor();
-        }
     }
 
     public void calculate() {
@@ -28,7 +22,7 @@ public class ActorFactory {
         while (true){
             for(int i = 0; i < numberActors; i++){
                 if(nowIMoves == numberIMoves) break;
-                actors[i].setiMove(iRender[nowIMoves]);
+                actors[i] = new Actor(nowIMoves);
                 actors[i].start();
                 nowIMoves++;
             }

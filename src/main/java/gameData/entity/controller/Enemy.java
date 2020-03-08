@@ -3,6 +3,7 @@ package gameData.entity.controller;
 import engine.entity.interfaces.IAlive;
 import engine.entity.interfaces.IMove;
 import engine.entity.interfaces.IRender;
+import engine.game.Main;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import engine.render.Camera;
@@ -51,18 +52,18 @@ public class Enemy implements IMove, IRender, IAlive {
         alive = true;
     }
 
-    public void update(float delta, Vector3f targetCord) {
+    public void update(Vector3f targetCord) {
         if(alive) {
-            this.delta = delta;
+            this.delta = (float) Main.frame_cap;
             setTarget(targetCord);
             setAngle();
             move();
         }
     }
 
-    public void update(float delta) {
+    public void update() {
         if(alive) {
-        this.delta = delta;
+        this.delta = (float)Main.frame_cap;
         setAngle();
         move();
         }
@@ -71,6 +72,9 @@ public class Enemy implements IMove, IRender, IAlive {
     @Override
     public void render() {
         Shader shader = Shader.shader;
+        float[] vertices = new float[this.vertices.length];
+        System.arraycopy(this.vertices, 0, vertices, 0, this.vertices.length);
+        model.setVertices(Transform.rotate(vertices, angle));
         if (alive) {
             shader.bind();
             shader.setUniform("sampler", 0);
@@ -129,10 +133,10 @@ public class Enemy implements IMove, IRender, IAlive {
 
         transform.pos.add((speedX) * delta, speedY * delta, 0);
 
-        float[] vertices = new float[this.vertices.length];
-        System.arraycopy(this.vertices, 0, vertices, 0, this.vertices.length);
-
-        model.setVertices(Transform.rotate(vertices, angle));
+//        float[] vertices = new float[this.vertices.length];
+//        System.arraycopy(this.vertices, 0, vertices, 0, this.vertices.length);
+//
+//        model.setVertices(Transform.rotate(vertices, angle));
     }
 
     public Vector3f getPosition() {

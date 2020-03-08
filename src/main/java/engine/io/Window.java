@@ -46,7 +46,7 @@ public class Window {
 
         glfwMakeContextCurrent(window);
 
-        input = new Input(window);
+        input = Input.input;
 
     }
 
@@ -72,7 +72,7 @@ public class Window {
     }
 
     public void update() {
-        input.update();
+//        input.update();
         glfwPollEvents();
     }
 

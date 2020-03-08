@@ -43,6 +43,7 @@ public class Transform {
     public Matrix4f getProjection(Matrix4f target) {
         target.translate(pos);
         target.mul(scale);
+
         return target;
     }
 

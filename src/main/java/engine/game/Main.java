@@ -77,7 +77,7 @@ public class Main {
 
         immortal = true;
         player = Player.player;
-        jetTraceFactory = new JetTraceFactory(500);
+        jetTraceFactory = new JetTraceFactory(1);
         player.getPosition();
 //        enemies = new Enemy[100];
 
@@ -120,6 +120,8 @@ public class Main {
                 can_render = true;
 
                 player.update();
+                actorFactory.joinActor();
+                actorFactory.calculate();
                 jetTraceFactory.createJetTrace(player.getPosition());
                 Camera.camera.setPosition(player.getPosition());
 //                for (Enemy enemy : ActorFactory.iRender) {
@@ -146,7 +148,7 @@ public class Main {
 //                    }
                    // enemy.update(playerCord);
  //               }
-                actorFactory.calculate();
+
                 Window.windows.update();
                 timeWastLogik+= Timer.getTime() - savedtime;
             }
@@ -183,8 +185,8 @@ public class Main {
                 timeWastRender+= Timer.getTime() - savedtime;
             }
 
-            System.out.println("logic==  "+timeWastLogik);
-            System.out.println("render=  " +timeWastRender);
+//            System.out.println("logic==  "+timeWastLogik);
+//            System.out.println("render=  " +timeWastRender);
         }
 
 

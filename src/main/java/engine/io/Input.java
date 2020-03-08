@@ -28,17 +28,18 @@ public class Input extends Thread {
     }
 
     public void run() {
-        while (alive)
-        for (int i = 32; i < GLFW_KEY_LAST; i++) {
-            keys[i] = isKeyDown(i);
-            if (keys[i]) Main.thisMain.keyIsPressed(i);
-        }
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        while (alive) {
+            for (int i = 32; i < GLFW_KEY_LAST; i++) {
+                keys[i] = isKeyDown(i);
+                if (keys[i]) Main.thisMain.keyIsPressed(i);
+            }
+            try {
+                Thread.sleep(20);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
+        }
     }
 
     public static void setAlive(boolean alive) {

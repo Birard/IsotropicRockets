@@ -1,9 +1,11 @@
-package render;
+package engine.render;
 
+import engine.io.Window;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 public class Camera {
+    public static final Camera camera = new Camera(Window.windows.getWidth(), Window.windows.getHeight());
     private Vector3f position;
     private Matrix4f projection;
 
@@ -13,7 +15,7 @@ public class Camera {
     }
 
     public Vector3f getPosition() {
-        return this.position;
+        return new Vector3f(this.position);
     }
 
     public void setPosition(Vector3f position) {
@@ -21,6 +23,6 @@ public class Camera {
     }
 
     public Matrix4f getProjection() {
-        return projection.translate(position, new Matrix4f());
+        return projection.translate(new Vector3f(-position.x, -position.y, -position.z), new Matrix4f());
     }
 }

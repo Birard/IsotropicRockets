@@ -1,5 +1,6 @@
-package render;
+package engine.render;
 
+import engine.io.Window;
 import org.joml.Matrix4f;
 import org.lwjgl.BufferUtils;
 
@@ -9,16 +10,17 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.FloatBuffer;
 
+import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
 import static org.lwjgl.opengl.GL20.*;
 
 public class Shader {
-    private int program;
+    public static final Shader shader = new Shader("shader");
+    private final int program;
     private int vs;
     private int fs;
 
     public Shader(String filename) {
         program = glCreateProgram();
-
         vs = glCreateShader(GL_VERTEX_SHADER);
         glShaderSource(vs, readFile(filename + ".vs"));
         glCompileShader(vs);

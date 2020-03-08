@@ -1,15 +1,15 @@
-package entity;
+package gameData.entity.controller;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 public class Transform {
     public Vector3f pos;
-    public Vector3f scale;
+    public Matrix4f scale;
 
     public Transform() {
         pos = new Vector3f(0, 0, 0);
-        scale = new Vector3f(16, 16, 1);
+        scale = new Matrix4f().scale(16);
 
     }
 
@@ -41,12 +41,12 @@ public class Transform {
     }
 
     public Matrix4f getProjection(Matrix4f target) {
-        target.scale(scale);
         target.translate(pos);
+        target.mul(scale);
         return target;
     }
 
     public Vector3f getPosition() {
-        return pos;
+        return new Vector3f(pos);
     }
 }

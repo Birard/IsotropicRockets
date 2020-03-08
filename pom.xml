@@ -31,10 +31,6 @@
     <dependencies>
         <dependency>
             <groupId>org.lwjgl</groupId>
-            <artifactId>lwjgl</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.lwjgl</groupId>
             <artifactId>lwjgl-assimp</artifactId>
         </dependency>
         <dependency>
@@ -355,6 +351,11 @@
             <groupId>com.code-disaster.steamworks4j</groupId>
             <artifactId>steamworks4j-server</artifactId>
             <version>${steamworks4j-server.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.lwjgl</groupId>
+            <artifactId>lwjgl</artifactId>
+            <version>3.2.3</version>
         </dependency>
     </dependencies>
 

@@ -1,22 +1,21 @@
-package io;
+package engine.io;
 
-import game.Main;
+import engine.game.Main;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 
 import static org.lwjgl.glfw.GLFW.*;
 
 public class Window {
+    public static final Window windows = new Window();
     private long window;
 
     private int width, height;
-    private Main main;
     private boolean fullscreen;
 
     private Input input;
 
-    public Window(Main main) {
-        this.main = main;
+    public Window() {
         setSize(640, 480);
         setFullscreen(false);
     }
@@ -47,7 +46,7 @@ public class Window {
 
         glfwMakeContextCurrent(window);
 
-        input = new Input(window, main);
+        input = new Input(window);
 
     }
 

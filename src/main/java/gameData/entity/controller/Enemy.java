@@ -1,86 +1,89 @@
-package entity;
+package gameData.entity.controller;
 
-import entity.interfaces.IMove;
-import entity.interfaces.IRender;
+import engine.entity.interfaces.IAlive;
+import engine.entity.interfaces.IMove;
+import engine.entity.interfaces.IRender;
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
-import render.Camera;
-import render.Model;
-import render.Shader;
-import render.Texture;
+import engine.render.Camera;
+import engine.render.Model;
+import engine.render.Shader;
+import engine.render.Texture;
 
-public class Enemy implements IMove, IRender {
+public class Enemy implements IMove, IRender, IAlive {
 
     private Vector3f targetCord;
-    private Model model;
-    private Texture texture;
+    private Texture texture = new Texture("src/main/resources/enemy.png");
     private Transform transform;
     private float delta;
-    private float force;
+    private static final float force = 400;
     private float speedX;
     private float speedY;
     private float angle;
-    private float[] vertices;
-    private float[] texturef;
-    private int[] indices;
+    private final float[] vertices = new float[]{
+            // верхний правый треугольник
+            -0.5f, 0.5f, 0, //TOP LEFT      0
+            0.5f, 0.5f, 0,  //TOP RIGHT     1
+            0.5f, -0.5f, 0,  //BOTTOM RIGHT 2
+            -0.5f, -0.5f, 0, //BOTTOM LEFT  3
+    };
+    private static final float[] texturef = new float[]{
+            0, 0, // 0
+            1, 0, // 1
+            1, 1, // 2
+            0, 1, // 3
+    };
+    private static final int[] indices = new int[]{
+            0, 1, 2,
+            2, 3, 0
+    };
+    private final Model model = new Model(vertices, texturef, indices);
+    private boolean alive;
 
     public Enemy(Vector3f pos) {
-        vertices = new float[]{
-
-                // верхний правый треугольник
-                -0.5f, 0.5f, 0, //TOP LEFT      0
-                0.5f, 0.5f, 0,  //TOP RIGHT     1
-                0.5f, -0.5f, 0,  //BOTTOM RIGHT 2
-                -0.5f, -0.5f, 0, //BOTTOM LEFT  3
-        };
-
-        texturef = new float[]{
-                0, 0, // 0
-                1, 0, // 1
-                1, 1, // 2
-                0, 1, // 3
-        };
-
-        indices = new int[]{
-                0, 1, 2,
-                2, 3, 0
-        };
-
-        model = new Model(vertices, texturef, indices);
-        force = 20;
         speedX = 0;
         speedY = 0;
-        this.texture = new Texture("src/main/resources/enemy.png");
         transform = new Transform();
         transform.pos = pos;
-        transform.scale = new Vector3f(16, 16, 1);
+        transform.scale = new Matrix4f().scale(16);
         targetCord = new Vector3f(0, 0, 0);
         angle = 0;
+        alive = true;
     }
 
     public void update(float delta, Vector3f targetCord) {
-        this.delta = delta;
-        setTarget(targetCord);
-        setAngle();
-        move();
+        if(alive) {
+            this.delta = delta;
+            setTarget(targetCord);
+            setAngle();
+            move();
+        }
     }
 
     public void update(float delta) {
+        if(alive) {
         this.delta = delta;
         setAngle();
         move();
+        }
     }
 
     @Override
-    public void render(Shader shader, Camera camera) {
-        shader.bind();
-        shader.setUniform("sampler", 0);
-        shader.setUniform("projection", transform.getProjection(camera.getProjection()));
-        texture.bind(0);
-        model.render();
+    public void render() {
+        Shader shader = Shader.shader;
+        if (alive) {
+            shader.bind();
+            shader.setUniform("sampler", 0);
+            shader.setUniform("projection", transform.getProjection(Camera.camera.getProjection()));
+            texture.bind(0);
+            model.render();
+        }
     }
 
     public void setTarget(Vector3f targetCord) {
-        this.targetCord = targetCord;
+        if (alive) {
+            this.targetCord = targetCord;
+        }
     }
 
     public void setAngle(float angle) {
@@ -119,7 +122,7 @@ public class Enemy implements IMove, IRender {
         Vector3f vectorF = new Vector3f(0, force, 0);
         vectorF = transform.rotate(vectorF, angle);
 
-        float k = (float) 0.4;
+        float k = (float) 0.0;
 
         speedY = speedY + ((vectorF.y - speedY*k) * delta);
         speedX = speedX + ((vectorF.x - speedX*k) * delta);
@@ -146,5 +149,20 @@ public class Enemy implements IMove, IRender {
 
     public float getSpeedY() {
         return speedY;
+    }
+
+    @Override
+    public boolean isAlive() {
+        return alive;
+    }
+
+    @Override
+    public void setAlive() {
+        alive = true;
+    }
+
+    @Override
+    public void setDead(Enemy enemy) {
+        alive = false;
     }
 }

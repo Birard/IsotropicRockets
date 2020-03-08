@@ -1,12 +1,13 @@
-package entity;
+package gameData.entity.controller;
 
-import entity.interfaces.IMove;
-import entity.interfaces.IRender;
+import engine.entity.interfaces.IMove;
+import engine.entity.interfaces.IRender;
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
-import render.Camera;
-import render.Model;
-import render.Shader;
-import render.Texture;
+import engine.render.Camera;
+import engine.render.Model;
+import engine.render.Shader;
+import engine.render.Texture;
 
 public class Scrap implements IMove, IRender {
 
@@ -48,7 +49,7 @@ public class Scrap implements IMove, IRender {
         this.texture = new Texture("src/main/resources/player/scraps/scrap" + name + ".png");
         transform = new Transform();
         transform.pos = pos;
-        transform.scale = new Vector3f(16, 16, 1);
+        transform.scale = new Matrix4f().scale(16);
     }
 
     public void update(float delta) {
@@ -57,10 +58,11 @@ public class Scrap implements IMove, IRender {
     }
 
     @Override
-    public void render(Shader shader, Camera camera) {
+    public void render() {
+        Shader shader = Shader.shader;
         shader.bind();
         shader.setUniform("sampler", 0);
-        shader.setUniform("projection", transform.getProjection(camera.getProjection()));
+        shader.setUniform("projection", transform.getProjection(Camera.camera.getProjection()));
         texture.bind(0);
         model.render();
     }

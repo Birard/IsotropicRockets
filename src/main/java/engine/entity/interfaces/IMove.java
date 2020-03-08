@@ -1,4 +1,4 @@
-package entity.interfaces;
+package engine.entity.interfaces;
 
 public interface IMove {
 

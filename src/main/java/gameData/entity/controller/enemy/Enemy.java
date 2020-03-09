@@ -1,9 +1,11 @@
-package gameData.entity.controller;
+package gameData.entity.controller.enemy;
 
 import engine.entity.interfaces.IAlive;
 import engine.entity.interfaces.IMove;
 import engine.entity.interfaces.IRender;
+import engine.entity.interfaces.IUpdate;
 import engine.game.Main;
+import gameData.entity.controller.Transform;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import engine.render.Camera;
@@ -11,7 +13,7 @@ import engine.render.Model;
 import engine.render.Shader;
 import engine.render.Texture;
 
-public class Enemy implements IMove, IRender, IAlive {
+public class Enemy implements IMove, IRender, IAlive, IUpdate {
 
     private Vector3f targetCord;
     private Texture texture = new Texture("src/main/resources/enemy.png");

@@ -28,6 +28,7 @@ public class Input extends Thread {
     }
 
     public void run() {
+        Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
         while (alive) {
             for (int i = 32; i < GLFW_KEY_LAST; i++) {
                 keys[i] = isKeyDown(i);

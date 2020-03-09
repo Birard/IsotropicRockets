@@ -1,7 +1,8 @@
-package gameData.entity.controller;
+package gameData.entity.controller.particles;
 
 import engine.entity.interfaces.IMove;
 import engine.entity.interfaces.IRender;
+import gameData.entity.controller.Transform;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import engine.render.Camera;
@@ -70,6 +71,16 @@ public class Scrap implements IMove, IRender {
     @Override
     public void move() {
         transform.pos.add(-speedX * delta, -speedY * delta, 0);
+    }
+
+    @Override
+    public float getSpeedX() {
+        return speedX;
+    }
+
+    @Override
+    public float getSpeedY() {
+        return speedY;
     }
 
     public Vector3f getPosition() {

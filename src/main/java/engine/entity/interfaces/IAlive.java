@@ -1,6 +1,6 @@
 package engine.entity.interfaces;
 
-import gameData.entity.controller.Enemy;
+import gameData.entity.controller.enemy.Enemy;
 
 public interface IAlive {
 

@@ -13,7 +13,6 @@ public class Window {
     private int width, height;
     private boolean fullscreen;
 
-    private Input input;
 
     public Window() {
         setSize(640, 480);
@@ -45,8 +44,6 @@ public class Window {
         glfwShowWindow(window);
 
         glfwMakeContextCurrent(window);
-
-        input = Input.input;
 
     }
 
@@ -88,7 +85,4 @@ public class Window {
         return window;
     }
 
-    public Input getInput() {
-        return input;
-    }
 }

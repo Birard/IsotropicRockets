@@ -1,4 +1,4 @@
-package gameData.entity.controller;
+package gameData.entity.controller.particles.JetTrace;
 
 import org.joml.Vector3f;
 

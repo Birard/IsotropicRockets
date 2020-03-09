@@ -1,6 +1,7 @@
-package gameData.entity.controller;
+package gameData.entity.controller.particles.JetTrace;
 
 import engine.entity.interfaces.IRender;
+import gameData.entity.controller.Transform;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import engine.render.Camera;

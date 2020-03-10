@@ -70,12 +70,12 @@ public class Enemy implements IMove, IRender, IAlive, IUpdate {
 
     @Override
     public void render() {
+        if (alive) {
         Shader shader = Shader.shader;
         float[] vertices = new float[this.vertices.length];
         System.arraycopy(this.vertices, 0, vertices, 0, this.vertices.length);
    //     model.cleanUp();
         model.setVertices(Transform.rotate(vertices, angle));
-        if (alive) {
             shader.bind();
             shader.setUniform("sampler", 0);
             shader.setUniform("projection", transform.getProjection(Camera.camera.getProjection()));
@@ -141,6 +141,18 @@ public class Enemy implements IMove, IRender, IAlive, IUpdate {
 
     public Vector3f getPosition() {
        return transform.getPosition();
+    }
+
+    public void setPosition (Vector3f pos) {
+        transform.pos = pos;
+    }
+
+    public void setSpeedX(float speedX) {
+        this.speedX = speedX;
+    }
+
+    public void setSpeedY(float speedY) {
+        this.speedY = speedY;
     }
 
     public Vector3f getTargetCord() {

@@ -23,16 +23,14 @@ public class Main {
 //    private static Enemy[] enemies;
     private static EnemyFactory enemyFactory;
     private static boolean immortal;
-    private static boolean again = true;
+    private static boolean again = true, pause = true;
     private static double startTime;
-    private static double timeFromLastPressImmortal;
     private static JetTraceFactory jetTraceFactory;
 
     public Main() {
     }
 
     public static void main(String[] args) {
-        timeFromLastPressImmortal = Timer.getTime() ;
         if (!glfwInit()) {
             throw new IllegalStateException("Failed to initialize");
         }
@@ -76,7 +74,7 @@ public class Main {
         player = Player.player;
         jetTraceFactory = new JetTraceFactory(200);
         player.getPosition();
-
+        player = new Player();
         Texture tex = TextureManager.getTexture("src/main/resources/checker.png");
 
         Matrix4f scale = new Matrix4f().scale(32);
@@ -99,81 +97,87 @@ public class Main {
         boolean can_render;
         Input.input.start();
         Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+
+        enemyFactory = new EnemyFactory(500);
+
         while (!Window.windows.shouldClose()) {
-            can_render = false;
-            time_2 = Timer.getTime();
-            passed = time_2 - time;
-            unprocessed += passed;
-            frame_time += passed;
-            time = time_2;
 
-            if(again) {
-                again = false;
-                startTime = Timer.getTime();
-                player.setAlive();// = new JetPlayer();
-                enemyFactory = new EnemyFactory(500);
-            }
+                can_render = false;
+                time_2 = Timer.getTime();
+                passed = time_2 - time;
+                unprocessed += passed;
+                frame_time += passed;
+                time = time_2;
+
+                if (again) {
+                    again = false;
+                    startTime = Timer.getTime();
+                    player.setAlive();// = new JetPlayer();
+                    enemyFactory.setAllAlive();
+                }
 
 
-            while (unprocessed >= frame_cap) {
-                savedtime = Timer.getTime();
-                unprocessed -= frame_cap;
-                can_render = true;
+                while (unprocessed >= frame_cap) {
+                    savedtime = Timer.getTime();
+                    unprocessed -= frame_cap;
+                    can_render = true;
+                    if (!pause) {
+                        player.update();
+                        enemyFactory.joinThread();
+                        enemyFactory.setTarget(player);
+                        enemyFactory.calculate();
+                        jetTraceFactory.createJetTrace(player.getPosition());
+                        Camera.camera.setPosition(player.getPosition());
+                        if (!immortal) {
+                            int hit = enemyFactory.hit(player);
+                            if (hit != -1) {
+                                player.setDead(enemyFactory.getEnemies().get(hit));
+                                enemyFactory.setAllDead();
+                                System.out.println("Your time:" + (Timer.getTime() - startTime));
+                                break;
+                            }
+                        }
+                    }
+                        Window.windows.update();
+                        timeWastLogik += Timer.getTime() - savedtime;
 
-                player.update();
-               enemyFactory.joinThread();
-               enemyFactory.setTarget(player);
-               enemyFactory.calculate();
-                jetTraceFactory.createJetTrace(player.getPosition());
-                Camera.camera.setPosition(player.getPosition());
-                    if (!immortal) {
-                        int hit = enemyFactory.hit(player);
-                        if(hit != -1) {
-                            player.setDead(enemyFactory.getEnemies().get(hit));
-                            enemyFactory.setAllDead();
-                            System.out.println("Your time:" + (Timer.getTime() - startTime));
-                            break;
+                }
+
+                if (frame_time >= 1.0) {
+                    frame_time = 0;
+                    // System.out.println("FPS: " + frames + "   Logic: " + logic_frames);
+                    frames = 0;
+                }
+                if (can_render) {
+                    savedtime = Timer.getTime();
+                    glClear(GL_COLOR_BUFFER_BIT);
+
+                    shader.bind();
+                    shader.setUniform("sampler", 0);
+                    shader.setUniform("projection", Camera.camera.getProjection().translate(new Vector3f(0, 0, 0)).mul(scale));
+                    tex.bind(0);
+                    model.render();
+
+                    for (int i = 0; i < 8; i++) {
+                        for (int j = 0; j < 8; j++) {
+                            tiles.renderTile((byte) 0, i, j, scale);
                         }
                     }
 
-                Window.windows.update();
-                timeWastLogik+= Timer.getTime() - savedtime;
-            }
-
-            if (frame_time >= 1.0) {
-                frame_time = 0;
-               // System.out.println("FPS: " + frames + "   Logic: " + logic_frames);
-                frames = 0;
-            }
-            if (can_render) {
-                savedtime = Timer.getTime();
-                glClear(GL_COLOR_BUFFER_BIT);
-
-                shader.bind();
-                shader.setUniform("sampler", 0);
-                shader.setUniform("projection", Camera.camera.getProjection().translate(new Vector3f(0,0,0)).mul(scale));
-                tex.bind(0);
-                model.render();
-
-                for(int i = 0; i < 8; i++) {
-                    for (int j = 0; j < 8; j++) {
-                        tiles.renderTile((byte) 0, i, j, scale);
-                    }
+                    jetTraceFactory.render();
+                    player.render();
+                    enemyFactory.render();
+                    Window.windows.swapBuffers();
+                    frames++;
+                    timeWastRender += Timer.getTime() - savedtime;
                 }
-
-                jetTraceFactory.render();
-                player.render();
-                enemyFactory.render();
-                Window.windows.swapBuffers();
-                frames++;
-                timeWastRender+= Timer.getTime() - savedtime;
-            }
 
 //            System.out.println("logic==  "+timeWastLogik);
 //            System.out.println("render=  " +timeWastRender);
-        }
+            }
 
-        glfwTerminate();
+            glfwTerminate();
+
     }
 
     public void keyIsPressed(int key) {
@@ -198,13 +202,15 @@ public class Main {
             case GLFW_KEY_N:
                 again = true;
                 break;
-
             case GLFW_KEY_I:
-                if((timeFromLastPressImmortal- Timer.getTime()) < 1) {
+                if(Input.isKeyPressed(key)) {
                 immortal = !immortal;
-                timeFromLastPressImmortal = Timer.getTime();
                 }
-
+                break;
+            case GLFW_KEY_O:
+                if(Input.isKeyPressed(key)) {
+                    pause = !pause;
+                }
                 break;
         }
     }

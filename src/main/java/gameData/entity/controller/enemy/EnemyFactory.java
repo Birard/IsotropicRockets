@@ -3,7 +3,6 @@ package gameData.entity.controller.enemy;
 
 import engine.Threads.UpdateThread;
 import engine.entity.interfaces.IMove;
-import engine.entity.interfaces.IUpdate;
 import gameData.entity.controller.particles.JetTrace.JetTraceFactory;
 import org.joml.Vector3f;
 
@@ -48,8 +47,13 @@ public class EnemyFactory {
         thread.start();
     }
 
-    public void setDead(int i) {
-        ((Enemy) enemies.get(i)).setDead(((Enemy) enemies.get(i)));
+    public void setAllAlive() {
+        for (int i = 0; i < numberOfEnemy; i++) {
+            ((Enemy)enemies.get(i)).setSpeedX(0);
+            ((Enemy)enemies.get(i)).setSpeedY(0);
+            ((Enemy)enemies.get(i)).setPosition(new Vector3f(i * 10f + 1000f, i * 10f + 500f, 0));
+            ((Enemy)enemies.get(i)).setAlive();
+        }
     }
 
     public void setAllDead() {

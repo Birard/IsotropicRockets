@@ -10,6 +10,10 @@ public class TextureManager {
     private TextureManager() {
     }
 
+    public static int getNumberTextures() {
+       return textures.size();
+    }
+
     public static Texture getTexture(String filename) {
         if(textures.containsKey(filename)) return textures.get(filename);
 

@@ -21,7 +21,6 @@ public class Scrap implements IMove, IRender {
 
     public Scrap(Vector3f pos, float speedX, float speedY, String name) {
         vertices = new float[]{
-
                 // верхний правый треугольник
                 -0.5f, 0.5f, 0, //TOP LEFT      0
                 0.5f, 0.5f, 0,  //TOP RIGHT     1
@@ -45,9 +44,13 @@ public class Scrap implements IMove, IRender {
         this.speedX = speedX;
         this.speedY = speedY;
         this.texture = TextureManager.getTexture("src/main/resources/player/scraps/scrap" + name + ".png");
-        transform = new Transform();
+        transform = new Transform(pos);
+    }
+
+    public void setPhysics(Vector3f pos, float speedX, float speedY) {
+        this.speedX = speedX;
+        this.speedY = speedY;
         transform.pos = pos;
-        transform.scale = new Matrix4f().scale(16);
     }
 
     public void update(float delta) {

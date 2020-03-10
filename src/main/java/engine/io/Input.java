@@ -8,31 +8,29 @@ import static org.lwjgl.glfw.GLFW.glfwGetKey;
 public class Input extends Thread {
     private static boolean alive = true;
     public static final Input input = new Input();
-    private long window;
+    private static long window = Window.windows.getWindow();;
 
-    private boolean[] keys;
+    private static boolean[] keys = new boolean[GLFW_KEY_LAST];
 
-    public Input() {
-        this.window = Window.windows.getWindow();
-        this.keys = new boolean[GLFW_KEY_LAST];
+    private Input() {
         for (int i = 0; i < GLFW_KEY_LAST; i++)
             keys[i] = false;
     }
 
-    public boolean isKeyDown(int key) {
-        return glfwGetKey(window, key) == 1;
-    }
+    public static boolean isKeyDown(int key){return glfwGetKey(window, key) == 1;}
 
-    public boolean isKeyPressed(int key) {
-        return (isKeyDown(key) && !keys[key]);
-    }
+    public static boolean isKeyPressed(int key){return (isKeyDown(key) && !keys[key]);}
+
+    public static boolean isKeyReleased(int key){return (isKeyDown(key) && keys[key]);}
+
+    public static boolean isKeyUnpressed(int key){return (!isKeyDown(key) && keys[key]);}
 
     public void run() {
         Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
         while (alive) {
             for (int i = 32; i < GLFW_KEY_LAST; i++) {
+                if (isKeyDown(i)) Main.thisMain.keyIsPressed(i);
                 keys[i] = isKeyDown(i);
-                if (keys[i]) Main.thisMain.keyIsPressed(i);
             }
             try {
                 Thread.sleep(20);

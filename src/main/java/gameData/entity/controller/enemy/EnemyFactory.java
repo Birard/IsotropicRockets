@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 public class EnemyFactory {
     private int numberOfEnemy;
-    private ArrayList enemies;
+    private  ArrayList enemies;
     private UpdateThread thread;
     private JetTraceFactory jetTraceFactory = new JetTraceFactory(500);
 

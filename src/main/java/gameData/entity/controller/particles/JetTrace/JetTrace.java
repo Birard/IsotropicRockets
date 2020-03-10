@@ -1,13 +1,10 @@
 package gameData.entity.controller.particles.JetTrace;
 
 import engine.entity.interfaces.IRender;
+import engine.render.*;
 import gameData.entity.controller.Transform;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
-import engine.render.Camera;
-import engine.render.Model;
-import engine.render.Shader;
-import engine.render.Texture;
 
 public class JetTrace implements IRender {
 
@@ -32,7 +29,7 @@ public class JetTrace implements IRender {
     };
 
     private static final Model model = new Model(vertices, texturef, indices);
-    private static final Texture texture = new Texture("src/main/resources/jetTrace.png");
+    private static final Texture texture = TextureManager.getTexture("src/main/resources/jetTrace.png");
     private Transform transform;
 
     public JetTrace(Vector3f pos) {

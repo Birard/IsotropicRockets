@@ -2,13 +2,10 @@ package gameData.entity.controller.particles;
 
 import engine.entity.interfaces.IMove;
 import engine.entity.interfaces.IRender;
+import engine.render.*;
 import gameData.entity.controller.Transform;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
-import engine.render.Camera;
-import engine.render.Model;
-import engine.render.Shader;
-import engine.render.Texture;
 
 public class Scrap implements IMove, IRender {
 
@@ -47,7 +44,7 @@ public class Scrap implements IMove, IRender {
         model = new Model(vertices, texturef, indices);
         this.speedX = speedX;
         this.speedY = speedY;
-        this.texture = new Texture("src/main/resources/player/scraps/scrap" + name + ".png");
+        this.texture = TextureManager.getTexture("src/main/resources/player/scraps/scrap" + name + ".png");
         transform = new Transform();
         transform.pos = pos;
         transform.scale = new Matrix4f().scale(16);

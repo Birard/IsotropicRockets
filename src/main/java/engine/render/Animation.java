@@ -21,7 +21,7 @@ public class Animation {
         this.frames = new Texture[amount];
         for(int i = 0; i < amount; i++) {
             //this.frames[i] = new Texture("anim/" + filename + i + ".png");
-            this.frames[i] = new Texture("src/main/resources/player/scraps/" + filename + i + ".png");
+            this.frames[i] = TextureManager.getTexture("src/main/resources/player/scraps/" + filename + i + ".png");
         }
     }
 

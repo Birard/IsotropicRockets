@@ -3,15 +3,12 @@ package gameData.entity.controller.player;
 import engine.entity.interfaces.IAlive;
 import engine.entity.interfaces.IMove;
 import engine.entity.interfaces.IRender;
+import engine.render.*;
 import gameData.entity.controller.particles.Scrap;
 import gameData.entity.controller.Transform;
 import gameData.entity.controller.enemy.Enemy;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
-import engine.render.Camera;
-import engine.render.Model;
-import engine.render.Shader;
-import engine.render.Texture;
 
 public class JetPlayer extends Player implements IMove, IRender, IAlive {
     private Model model;
@@ -51,7 +48,7 @@ public class JetPlayer extends Player implements IMove, IRender, IAlive {
         scraps = new Scrap[0];
         alive = true;
         model = new Model(vertices, texturef, indices);
-        this.texture = new Texture("src/main/resources/enemy.png");
+        this.texture = TextureManager.getTexture("src/main/resources/enemy.png");
         transform = new Transform();
         transform.scale = new Matrix4f().scale(16);
         force = 10;
@@ -132,7 +129,7 @@ public class JetPlayer extends Player implements IMove, IRender, IAlive {
         scraps = new Scrap[0];
         alive = true;
         model = new Model(vertices, texturef, indices);
-        this.texture = new Texture("src/main/resources/enemy.png");
+        this.texture = TextureManager.getTexture("src/main/resources/enemy.png");
         transform = new Transform();
         transform.scale = new Matrix4f().scale(16);
         force = 10;

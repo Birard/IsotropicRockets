@@ -1,5 +1,6 @@
 package engine.game;
 
+import engine.render.*;
 import gameData.entity.controller.enemy.EnemyFactory;
 import engine.io.Input;
 import engine.world.TileRenderer;
@@ -11,10 +12,6 @@ import engine.io.Window;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL;
-import engine.render.Camera;
-import engine.render.Model;
-import engine.render.Shader;
-import engine.render.Texture;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
@@ -79,9 +76,8 @@ public class Main {
         player = Player.player;
         jetTraceFactory = new JetTraceFactory(200);
         player.getPosition();
-        enemyFactory = new EnemyFactory(5);
 
-        Texture tex = new Texture("src/main/resources/checker.png");
+        Texture tex = TextureManager.getTexture("src/main/resources/checker.png");
 
         Matrix4f scale = new Matrix4f().scale(32);
 
@@ -115,7 +111,7 @@ public class Main {
                 again = false;
                 startTime = Timer.getTime();
                 player.setAlive();// = new JetPlayer();
-                enemyFactory = new EnemyFactory(5);
+                enemyFactory = new EnemyFactory(500);
             }
 
 

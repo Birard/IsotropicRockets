@@ -5,18 +5,15 @@ import engine.entity.interfaces.IMove;
 import engine.entity.interfaces.IRender;
 import engine.entity.interfaces.IUpdate;
 import engine.game.Main;
+import engine.render.*;
 import gameData.entity.controller.Transform;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
-import engine.render.Camera;
-import engine.render.Model;
-import engine.render.Shader;
-import engine.render.Texture;
 
 public class Enemy implements IMove, IRender, IAlive, IUpdate {
 
     private Vector3f targetCord;
-    private Texture texture = new Texture("src/main/resources/enemy.png");
+    private static final Texture texture = TextureManager.getTexture("src/main/resources/enemy.png");
     private Transform transform;
     private float delta;
     private static final float force = 400;
@@ -76,6 +73,7 @@ public class Enemy implements IMove, IRender, IAlive, IUpdate {
         Shader shader = Shader.shader;
         float[] vertices = new float[this.vertices.length];
         System.arraycopy(this.vertices, 0, vertices, 0, this.vertices.length);
+   //     model.cleanUp();
         model.setVertices(Transform.rotate(vertices, angle));
         if (alive) {
             shader.bind();

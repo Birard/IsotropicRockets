@@ -1,9 +1,6 @@
 package engine.world;
 
-import engine.render.Camera;
-import engine.render.Model;
-import engine.render.Shader;
-import engine.render.Texture;
+import engine.render.*;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
@@ -41,7 +38,7 @@ public class TileRenderer {
             if(Tile.tiles[i] != null) {
                 if (!tile_textures.containsKey(Tile.tiles[i].getTexture())) {
                     String tex = Tile.tiles[i].getTexture();
-                    tile_textures.put(tex, new Texture(tex + ".png"));
+                    tile_textures.put(tex, TextureManager.getTexture(tex + ".png"));
                 }
             }
         }

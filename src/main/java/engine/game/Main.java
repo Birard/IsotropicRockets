@@ -27,7 +27,7 @@ public class Main {
     private static double startTime;
     private static JetTraceFactory jetTraceFactory;
 
-    public Main() {
+    private Main() {
     }
 
     public static void main(String[] args) {
@@ -36,8 +36,8 @@ public class Main {
         }
         Window.setCallbacks();
 
-        Window.windows.setFullscreen(true);
-        Window.windows.setSize(1376, 768);
+        Window.windows.setFullscreen(false);
+        Window.windows.setSize(1376/2, 768/2);
         Window.windows.createWindow("Game");
 
         GL.createCapabilities();
@@ -175,7 +175,7 @@ public class Main {
 //            System.out.println("logic==  "+timeWastLogik);
 //            System.out.println("render=  " +timeWastRender);
             }
-
+            Input.setAlive(false);
             glfwTerminate();
 
     }
@@ -184,7 +184,6 @@ public class Main {
 
         switch (key) {
             case GLFW_KEY_ESCAPE:
-                Input.setAlive(false);
                 glfwSetWindowShouldClose(Window.windows.getWindow(), true);
                 break;
             case GLFW_KEY_A:

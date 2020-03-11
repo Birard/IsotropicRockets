@@ -6,13 +6,15 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_LAST;
 import static org.lwjgl.glfw.GLFW.glfwGetKey;
 
 public class Input extends Thread {
-    private static boolean alive = true;
     public static final Input input = new Input();
-    private static long window = Window.windows.getWindow();;
-
-    private static boolean[] keys = new boolean[GLFW_KEY_LAST];
+    private static long window;
+    private static boolean[] keys;
+    private static boolean alive;
 
     private Input() {
+        window = Window.windows.getWindow();
+        alive = true;
+        keys = new boolean[GLFW_KEY_LAST];
         for (int i = 0; i < GLFW_KEY_LAST; i++)
             keys[i] = false;
     }

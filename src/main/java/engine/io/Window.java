@@ -9,12 +9,10 @@ import static org.lwjgl.glfw.GLFW.*;
 public class Window {
     public static final Window windows = new Window();
     private long window;
-
     private int width, height;
     private boolean fullscreen;
 
-
-    public Window() {
+    private Window() {
         setSize(640, 480);
         setFullscreen(false);
     }

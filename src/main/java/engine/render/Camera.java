@@ -9,13 +9,17 @@ public class Camera {
     private Vector3f position;
     private Matrix4f projection;
 
-    public Camera(int width, int height) {
+    private Camera(int width, int height) {
         position = new Vector3f(0, 0, 0);
         projection = new Matrix4f().setOrtho2D(-width / 2f, width / 2f, -height / 2f, height / 2f);
     }
 
     public Vector3f getPosition() {
         return new Vector3f(this.position);
+    }
+
+    public void setSize(int width, int height) {
+        projection = projection.setOrtho2D(-width / 2f, width / 2f, -height / 2f, height / 2f);
     }
 
     public void setPosition(Vector3f position) {

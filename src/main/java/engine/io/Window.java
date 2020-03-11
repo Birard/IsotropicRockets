@@ -1,8 +1,10 @@
 package engine.io;
 
-import engine.game.Main;
+
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
+import org.lwjgl.glfw.GLFWWindowSizeCallback;
+import org.lwjgl.glfw.Callbacks;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -10,11 +12,13 @@ public class Window {
     public static final Window windows = new Window();
     private long window;
     private int width, height;
-    private boolean fullscreen;
+    private boolean fullscreen, hasResized;
+    private GLFWWindowSizeCallback windowSizeCallback;
 
     private Window() {
         setSize(640, 480);
         setFullscreen(false);
+        hasResized = false;
     }
 
     public static void setCallbacks() {
@@ -24,6 +28,19 @@ public class Window {
                 throw new IllegalStateException(GLFWErrorCallback.getDescription(description));
             }
         });
+    }
+
+    private void setLocalCallbacks() {
+        windowSizeCallback = new GLFWWindowSizeCallback() {
+            @Override
+            public void invoke(long argWindow, int argWidth, int argHeight) {
+                width = argWidth;
+                height = argHeight;
+                hasResized = true;
+            }
+        };
+
+        glfwSetWindowSizeCallback(window, windowSizeCallback);
     }
 
     public void createWindow(String title) {
@@ -40,9 +57,12 @@ public class Window {
             glfwSetWindowPos(window, (videoMode.width() - width) / 2, (videoMode.height() - height) / 2);
         }
         glfwShowWindow(window);
-
         glfwMakeContextCurrent(window);
+        setLocalCallbacks();
+    }
 
+    public void cleanUp() {
+        windowSizeCallback.close();
     }
 
     public boolean shouldClose() {
@@ -67,12 +87,15 @@ public class Window {
     }
 
     public void update() {
-//        input.update();
         glfwPollEvents();
     }
 
     public boolean isFullscreen() {
         return fullscreen;
+    }
+
+    public void setHasResized(boolean hasResized) {
+        this.hasResized = hasResized;
     }
 
     public void setFullscreen(boolean fullscreen) {
@@ -83,4 +106,5 @@ public class Window {
         return window;
     }
 
+    public boolean hasResized(){return hasResized; }
 }

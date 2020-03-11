@@ -109,6 +109,12 @@ public class Main {
                 frame_time += passed;
                 time = time_2;
 
+                if(Window.windows.hasResized()){
+                    Camera.camera.setSize(Window.windows.getWidth(), Window.windows.getHeight());
+                    glViewport(0,0,Window.windows.getWidth(), Window.windows.getHeight());
+                    Window.windows.setHasResized(false);
+                }
+
                 if (again) {
                     again = false;
                     startTime = Timer.getTime();

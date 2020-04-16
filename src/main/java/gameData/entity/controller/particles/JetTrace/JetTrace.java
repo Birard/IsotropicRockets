@@ -1,35 +1,21 @@
 package gameData.entity.controller.particles.JetTrace;
 
+
+import engine.assets.Model;
+import engine.assets.ModelManager;
 import engine.entity.interfaces.IRender;
-import engine.render.*;
+import engine.render.Camera;
+import engine.render.Shader;
+import engine.texture.Texture;
+import engine.texture.TextureManager;
 import gameData.entity.controller.Transform;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 public class JetTrace implements IRender {
 
-    private static final float[] vertices = new float[]{
-            // верхний правый треугольник
-            0, 0.5f, 0, //TOP LEFT      0
-            -0.5f, 0.5f, 0,  //TOP RIGHT     1
-            -0.5f, -0.5f, 0,  //BOTTOM RIGHT 2
-            //  -0.5f, -0.5f, 0, //BOTTOM LEFT  3
-    };
-
-    private static final float[] texturef = new float[]{
-            0, 0, // 0
-            1, 0, // 1
-            1, 1, // 2
-            //  0,1, // 3
-    };
-
-    private static final int[] indices = new int[]{
-            0, 1, 2,
-            //    2,3,0
-    };
-
-    private static final Model model = new Model(vertices, texturef, indices);
-    private static final Texture texture = TextureManager.getTexture("src/main/resources/jetTrace.png");
+    private static final Model model = ModelManager.getModel("standartQuad");
+    private static final Texture texture = TextureManager.getTexture("src/main/resources/cloud.png");
     private Transform transform;
 
     public JetTrace(Vector3f pos) {

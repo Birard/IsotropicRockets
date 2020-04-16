@@ -17,6 +17,7 @@ public class JetTraceFactory {
     }
 
     public void createJetTrace(Vector3f pos) {
+        if(maxJetTrace == 0) return;
             if (nowJetTrace == maxJetTrace) {
                 nowJetTrace = 0;
             }
@@ -25,15 +26,9 @@ public class JetTraceFactory {
     }
 
     public void render() {
+        if(maxJetTrace == 0) return;
             for (int i = 0; i < maxJetTrace; i++) {
                 jetTraces[i].render();
             }
-    }
-
-    public void deleteAll() {
-        nowJetTrace = 0;
-        for(int i = 0; i<maxJetTrace; i++) {
-            jetTraces[i] = new JetTrace(new Vector3f(0,0,-100));
-        }
     }
 }

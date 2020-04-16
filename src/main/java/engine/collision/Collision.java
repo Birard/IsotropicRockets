@@ -1,11 +1,12 @@
 package engine.collision;
 
 import org.joml.Vector2f;
+import org.joml.Vector3f;
 
 public class Collision {
-    public Vector2f distance;
+    public Vector3f distance;
     public boolean isIntersecting;
-    public Collision(Vector2f distance, boolean intersects) {
+    public Collision(Vector3f distance, boolean intersects) {
         this.distance = distance;
         this.isIntersecting = intersects;
     }

@@ -15,6 +15,7 @@ public class UpdateThread extends Thread{
         public void run() {
             Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
             for(IUpdate iUp : iUpdate) {
+                if(iUp == null) continue;
                 iUp.update();
             }
         }

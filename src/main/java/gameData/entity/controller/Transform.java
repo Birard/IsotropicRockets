@@ -30,11 +30,11 @@ public class Transform {
         return vertices;
     }
 
-    public static Vector3f rotate(Vector3f vector, float angle) {
+    public static void rotate(Vector3f vector, float angle) {
         double cosA = Math.cos(angle), sinA = Math.sin(angle), x = vector.x, y = vector.y;
         vector.x = (float)(x * cosA - y * sinA);
         vector.y = (float)(y * cosA + x * sinA);
-        return vector;
+       // return vector;
     }
 
     public Matrix4f getProjection(Matrix4f target) {

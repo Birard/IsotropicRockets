@@ -1,10 +1,15 @@
 package gameData.entity.controller.particles;
 
+import engine.*;
+import engine.assets.Model;
+import engine.assets.ModelManager;
 import engine.entity.interfaces.IMove;
 import engine.entity.interfaces.IRender;
-import engine.render.*;
+import engine.render.Camera;
+import engine.render.Shader;
+import engine.texture.Texture;
+import engine.texture.TextureManager;
 import gameData.entity.controller.Transform;
-import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 public class Scrap implements IMove, IRender {
@@ -20,27 +25,8 @@ public class Scrap implements IMove, IRender {
     private int[] indices;
 
     public Scrap(Vector3f pos, float speedX, float speedY, String name) {
-        vertices = new float[]{
-                // верхний правый треугольник
-                -0.5f, 0.5f, 0, //TOP LEFT      0
-                0.5f, 0.5f, 0,  //TOP RIGHT     1
-                0.5f, -0.5f, 0,  //BOTTOM RIGHT 2
-                -0.5f, -0.5f, 0, //BOTTOM LEFT  3
-        };
 
-        texturef = new float[]{
-                0, 0, // 0
-                1, 0, // 1
-                1, 1, // 2
-                0, 1, // 3
-        };
-
-        indices = new int[]{
-                0, 1, 2,
-                2, 3, 0
-        };
-
-        model = new Model(vertices, texturef, indices);
+        model = ModelManager.getModel("standartQuad");
         this.speedX = speedX;
         this.speedY = speedY;
         this.texture = TextureManager.getTexture("src/main/resources/player/scraps/scrap" + name + ".png");

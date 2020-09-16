@@ -13,8 +13,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>6</source>
-                    <target>6</target>
+                    <source>8</source>
+                    <target>8</target>
                 </configuration>
             </plugin>
         </plugins>
@@ -22,11 +22,104 @@
 
     <properties>
         <lwjgl.version>3.2.3</lwjgl.version>
-        <joml.version>1.9.20</joml.version>
-        <steamworks4j.version>1.8.0</steamworks4j.version>
+        <joml.version>1.9.25</joml.version>
         <steamworks4j-server.version>1.8.0</steamworks4j-server.version>
-        <lwjgl.natives>natives-windows</lwjgl.natives>
+        <steamworks4j.version>1.8.0</steamworks4j.version>
     </properties>
+
+    <profiles>
+        <profile>
+            <id>lwjgl-natives-linux-amd64</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                    <arch>amd64</arch>
+                </os>
+            </activation>
+            <properties>
+                <lwjgl.natives>natives-linux</lwjgl.natives>
+            </properties>
+        </profile>
+        <profile>
+            <id>lwjgl-natives-linux-aarch64</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                    <arch>aarch64</arch>
+                </os>
+            </activation>
+            <properties>
+                <lwjgl.natives>natives-linux-arm64</lwjgl.natives>
+            </properties>
+        </profile>
+        <profile>
+            <id>lwjgl-natives-linux-arm</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                    <arch>arm</arch>
+                </os>
+            </activation>
+            <properties>
+                <lwjgl.natives>natives-linux-arm32</lwjgl.natives>
+            </properties>
+        </profile>
+        <profile>
+            <id>lwjgl-natives-linux-arm32</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                    <arch>arm32</arch>
+                </os>
+            </activation>
+            <properties>
+                <lwjgl.natives>natives-linux-arm32</lwjgl.natives>
+            </properties>
+        </profile>
+        <profile>
+            <id>lwjgl-natives-macos-amd64</id>
+            <activation>
+                <os>
+                    <family>mac</family>
+                    <arch>amd64</arch>
+                </os>
+            </activation>
+            <properties>
+                <lwjgl.natives>natives-macos</lwjgl.natives>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.lwjgl</groupId>
+                    <artifactId>lwjgl-vulkan</artifactId>
+                    <classifier>natives-macos</classifier>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>lwjgl-natives-windows-amd64</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                    <arch>amd64</arch>
+                </os>
+            </activation>
+            <properties>
+                <lwjgl.natives>natives-windows</lwjgl.natives>
+            </properties>
+        </profile>
+        <profile>
+            <id>lwjgl-natives-windows-x86</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                    <arch>x86</arch>
+                </os>
+            </activation>
+            <properties>
+                <lwjgl.natives>natives-windows-x86</lwjgl.natives>
+            </properties>
+        </profile>
+    </profiles>
 
     <dependencyManagement>
         <dependencies>
@@ -41,6 +134,10 @@
     </dependencyManagement>
 
     <dependencies>
+        <dependency>
+            <groupId>org.lwjgl</groupId>
+            <artifactId>lwjgl</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.lwjgl</groupId>
             <artifactId>lwjgl-assimp</artifactId>
@@ -123,15 +220,7 @@
         </dependency>
         <dependency>
             <groupId>org.lwjgl</groupId>
-            <artifactId>lwjgl-openvr</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.lwjgl</groupId>
             <artifactId>lwjgl-opus</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.lwjgl</groupId>
-            <artifactId>lwjgl-ovr</artifactId>
         </dependency>
         <dependency>
             <groupId>org.lwjgl</groupId>
@@ -271,17 +360,7 @@
         </dependency>
         <dependency>
             <groupId>org.lwjgl</groupId>
-            <artifactId>lwjgl-openvr</artifactId>
-            <classifier>${lwjgl.natives}</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.lwjgl</groupId>
             <artifactId>lwjgl-opus</artifactId>
-            <classifier>${lwjgl.natives}</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.lwjgl</groupId>
-            <artifactId>lwjgl-ovr</artifactId>
             <classifier>${lwjgl.natives}</classifier>
         </dependency>
         <dependency>
@@ -356,18 +435,13 @@
         </dependency>
         <dependency>
             <groupId>com.code-disaster.steamworks4j</groupId>
-            <artifactId>steamworks4j</artifactId>
-            <version>${steamworks4j.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.code-disaster.steamworks4j</groupId>
             <artifactId>steamworks4j-server</artifactId>
             <version>${steamworks4j-server.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.lwjgl</groupId>
-            <artifactId>lwjgl</artifactId>
-            <version>3.2.3</version>
+            <groupId>com.code-disaster.steamworks4j</groupId>
+            <artifactId>steamworks4j</artifactId>
+            <version>${steamworks4j.version}</version>
         </dependency>
     </dependencies>
 

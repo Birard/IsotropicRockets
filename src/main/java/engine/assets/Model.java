@@ -46,8 +46,6 @@ public class Model {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, i_id);
         glDrawElements(GL_TRIANGLES, draw_count, GL_UNSIGNED_INT, 0);
 
-      //  glDrawArrays(GL_TRIANGLES, 0, draw_count);
-
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
 

@@ -40,7 +40,7 @@ public class MenuStage extends MainGameStage {
         double time_2;
         double passed;
 
-        double timeWastLogik =0, timeWastRender =0, savedtime;
+        double timeWastLogik = 0, timeWastRender = 0, savedtime;
 
         TileFactory tiles = new TileFactory(300);
 
@@ -49,6 +49,10 @@ public class MenuStage extends MainGameStage {
         boolean can_render;
 
         Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+
+
+
+        MenuRender menuRender = new MenuRender();
 
 
         //while (!Window.windows.shouldClose()) {
@@ -92,15 +96,19 @@ public class MenuStage extends MainGameStage {
 
             if (frame_time >= 1.0) {
                 frame_time = 0;
-                // System.out.println("FPS: " + frames + "   Logic: " + logic_frames);
+                System.out.println("FPS: " + frames);
                 frames = 0;
             }
             if (can_render) {
                 savedtime = Timer.getTime();
+
                 glClear(GL_COLOR_BUFFER_BIT);
-                tiles.render();
+
+                menuRender.render();
+
                 gui.render();
                 Window.windows.swapBuffers();
+
                 frames++;
                 timeWastRender += Timer.getTime() - savedtime;
             }

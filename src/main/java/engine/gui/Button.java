@@ -14,21 +14,16 @@ import org.joml.Vector3f;
 import java.awt.image.BufferedImage;
 
 public class Button {
-    public static final int STATE_IDLE      = 0;
-    public static final int STATE_SELECTED  = 1;
-    public static final int STATE_CLICKED   = 2;
 
-
-    private Texture texture;
-    private Model model = ModelManager.getModel("standartQuad");
-    private Vector3f pos, scale;
+    public Texture texture;
+    public Model model = ModelManager.getModel("standartQuad");
+    public Vector3f pos, scale;
     private float halfX , halfY;
-    private Matrix4f transform;
-    private int state, oldState;
+    public Matrix4f transform;
+    private int state;
     private BufferedImage bufferedImage;
 
     public Button(Vector3f pos, Vector3f scale) {
-        oldState = -1;
         this.state = 0;
         this.pos = pos;
         this.scale = scale;
@@ -69,13 +64,10 @@ public class Button {
     public void setText(String text)
     {
         bufferedImage = TextureManager.getTextImage(String.valueOf(text));
+        texture.reCreate(bufferedImage);
     }
 
     public void render() {
-        if(oldState!= state) {
-            texture.reCreate(bufferedImage);
-            oldState = state;
-        }
         Shader shader = Shader.shader;
         shader.bind();
         shader.setUniform("sampler", 0);
